@@ -7,7 +7,7 @@ final class RoutineStore: ObservableObject {
     @Published var isSyncing = false
     @Published var lastSyncError: String?
 
-    let settings = AppSettings()
+    @Published var settings = AppSettings()
     private let syncService = GitSyncService()
 
     private var routinesDirectory: URL {
