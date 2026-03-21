@@ -241,23 +241,32 @@ struct RoutinePlayerView: View {
     // MARK: - Player
 
     private var playerView: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: 0) {
+            // Top: progress bar
             overallProgressBar
+                .padding(.horizontal)
+                .padding(.top, 8)
 
-            Spacer()
+            // Center: fixed layout for step info + timer + notes
+            VStack(spacing: 16) {
+                Spacer()
 
-            stepHeader
+                stepHeader
+                    .frame(height: 56)
 
-            circularTimer
-                .padding(.vertical, 8)
+                circularTimer
 
-            notesSection
+                notesSection
+                    .frame(height: 60, alignment: .top)
 
-            Spacer()
+                Spacer()
+            }
 
+            // Bottom: controls pinned
             controlsBar
+                .padding(.bottom, 8)
         }
-        .padding()
+        .padding(.horizontal)
     }
 
     private var overallProgressBar: some View {
@@ -278,6 +287,7 @@ struct RoutinePlayerView: View {
         Text(viewModel.currentStep.title)
             .font(.title2.weight(.bold))
             .multilineTextAlignment(.center)
+            .frame(maxWidth: .infinity)
     }
 
     private var circularTimer: some View {
@@ -289,49 +299,48 @@ struct RoutinePlayerView: View {
                 .trim(from: 0, to: viewModel.stepProgress)
                 .stroke(Color.accentColor, style: StrokeStyle(lineWidth: 12, lineCap: .round))
                 .rotationEffect(.degrees(-90))
-                .animation(.linear(duration: 1), value: viewModel.stepProgress)
 
             VStack(spacing: 4) {
                 Text(timeString(viewModel.remainingSeconds))
                     .font(.system(size: 48, weight: .light, design: .monospaced))
+                    .contentTransition(.numericText())
                 Text("remaining")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
         }
         .frame(width: 220, height: 220)
+        .id(viewModel.currentStepIndex)
     }
 
     private var notesSection: some View {
-        Group {
+        VStack(alignment: .leading, spacing: 6) {
             if !viewModel.currentStep.notes.isEmpty {
-                VStack(alignment: .leading, spacing: 8) {
-                    ForEach(viewModel.currentStep.notes.indices, id: \.self) { i in
-                        let note = viewModel.currentStep.notes[i]
-                        if let link = note.link {
-                            Link(destination: link) {
-                                HStack(spacing: 6) {
-                                    Image(systemName: "link")
-                                        .font(.subheadline)
-                                    Text(note.text)
-                                        .font(.body)
-                                }
-                            }
-                        } else {
-                            HStack(alignment: .top, spacing: 6) {
-                                Text("•")
-                                    .foregroundStyle(.tertiary)
+                ForEach(viewModel.currentStep.notes.indices, id: \.self) { i in
+                    let note = viewModel.currentStep.notes[i]
+                    if let link = note.link {
+                        Link(destination: link) {
+                            HStack(spacing: 6) {
+                                Image(systemName: "link")
+                                    .font(.caption)
                                 Text(note.text)
+                                    .font(.subheadline)
                             }
-                            .font(.body)
-                            .foregroundStyle(.secondary)
+                        }
+                    } else {
+                        HStack(alignment: .top, spacing: 6) {
+                            Text("•")
+                                .foregroundStyle(.tertiary)
+                            Text(note.text)
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
                         }
                     }
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 24)
             }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 8)
     }
 
     private var controlsBar: some View {
