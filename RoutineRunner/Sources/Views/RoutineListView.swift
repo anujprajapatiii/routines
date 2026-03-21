@@ -4,6 +4,8 @@ struct RoutineListView: View {
     @EnvironmentObject private var store: RoutineStore
     @AppStorage("isDarkMode") private var isDarkMode = false
     @State private var showSettings = false
+    @State private var selectedRoutineForPlayer: Routine?
+    @State private var routineCompleted = false
 
     var body: some View {
         NavigationStack {
@@ -47,18 +49,32 @@ struct RoutineListView: View {
     private var routinesList: some View {
         List(store.routines) { routine in
             NavigationLink(destination: RoutineDetailView(routine: routine)) {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(routine.title)
-                        .font(.headline)
-                    HStack(spacing: 12) {
-                        Label("\(routine.steps.count) steps", systemImage: "list.number")
-                        Label(formatDuration(routine.totalDuration), systemImage: "clock")
+                HStack {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(routine.title)
+                            .font(.headline)
+                        HStack(spacing: 12) {
+                            Label("\(routine.steps.count) steps", systemImage: "list.number")
+                            Label(formatDuration(routine.totalDuration), systemImage: "clock")
+                        }
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                     }
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                    Spacer()
+                    Button {
+                        selectedRoutineForPlayer = routine
+                    } label: {
+                        Image(systemName: "play.circle.fill")
+                            .font(.system(size: 36))
+                            .foregroundStyle(.tint)
+                    }
+                    .buttonStyle(.plain)
                 }
                 .padding(.vertical, 4)
             }
+        }
+        .fullScreenCover(item: $selectedRoutineForPlayer) { routine in
+            RoutinePlayerView(routine: routine, routineCompleted: $routineCompleted, hapticsEnabled: store.settings.hapticsEnabled)
         }
     }
 
