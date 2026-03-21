@@ -83,4 +83,22 @@ final class RoutineStore: ObservableObject {
     private func ensureDirectoryExists() {
         try? FileManager.default.createDirectory(at: routinesDirectory, withIntermediateDirectories: true)
     }
+
+    /// A pre-populated store for SwiftUI previews.
+    static var preview: RoutineStore {
+        let store = RoutineStore()
+        store.routines = [
+            Routine(title: "Morning Routine", steps: [
+                Step(title: "Meditation", duration: 300, notes: [Note(text: "Focus on breathing")]),
+                Step(title: "Stretching", duration: 600),
+                Step(title: "Journaling", duration: 900, notes: [Note(text: "Write 3 gratitudes")]),
+            ], fileName: "morning.md"),
+            Routine(title: "Evening Wind-Down", steps: [
+                Step(title: "Screen off", duration: 60),
+                Step(title: "Reading", duration: 1200),
+                Step(title: "Breathing exercise", duration: 300),
+            ], fileName: "evening.md"),
+        ]
+        return store
+    }
 }

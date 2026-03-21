@@ -121,13 +121,13 @@ private let sampleRoutine = Routine(
 
 #Preview {
     RoutineListView()
-        .environmentObject(RoutineStore())
+        .environmentObject(RoutineStore.preview)
 }
 
 #Preview("Detail") {
     NavigationStack {
         RoutineDetailView(routine: sampleRoutine)
-            .environmentObject(RoutineStore())
+            .environmentObject(RoutineStore.preview)
     }
 }
 
@@ -137,5 +137,5 @@ private let sampleRoutine = Routine(
 
 #Preview("Settings") {
     SettingsView()
-        .environmentObject(RoutineStore())
+        .environmentObject(RoutineStore.preview)
 }
