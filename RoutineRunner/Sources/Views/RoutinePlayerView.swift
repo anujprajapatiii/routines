@@ -39,6 +39,7 @@ final class RoutinePlayerViewModel: ObservableObject {
         return 1.0 - (remainingSeconds / currentStep.duration)
     }
 
+    private let liveActivity = LiveActivityManager()
     private var timerCancellable: AnyCancellable?
     private var backgroundDate: Date?
     private var lifecycleCancellables = Set<AnyCancellable>()
@@ -52,6 +53,13 @@ final class RoutinePlayerViewModel: ObservableObject {
 
     func start() {
         lastResumeDate = Date()
+        liveActivity.startActivity(
+            routineTitle: routine.title,
+            totalSteps: routine.steps.count,
+            stepName: currentStep.title,
+            stepIndex: currentStepIndex,
+            remainingSeconds: Int(remainingSeconds)
+        )
         play()
     }
 
@@ -63,6 +71,7 @@ final class RoutinePlayerViewModel: ObservableObject {
         guard !isComplete else { return }
         isRunning = true
         lastResumeDate = Date()
+        updateLiveActivity()
         timerCancellable = Timer.publish(every: 1, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] _ in self?.tick() }
@@ -76,6 +85,7 @@ final class RoutinePlayerViewModel: ObservableObject {
         lastResumeDate = nil
         timerCancellable?.cancel()
         timerCancellable = nil
+        updateLiveActivity()
     }
 
     func skipForward() {
@@ -88,10 +98,12 @@ final class RoutinePlayerViewModel: ObservableObject {
         if hapticsEnabled {
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         }
+        updateLiveActivity()
     }
 
     func addTime(_ seconds: TimeInterval = 120) {
         remainingSeconds += seconds
+        updateLiveActivity()
     }
 
     private func tick() {
@@ -115,6 +127,16 @@ final class RoutinePlayerViewModel: ObservableObject {
         if hapticsEnabled {
             UINotificationFeedbackGenerator().notificationOccurred(.success)
         }
+        liveActivity.endActivity()
+    }
+
+    private func updateLiveActivity() {
+        liveActivity.updateActivity(
+            stepName: currentStep.title,
+            stepIndex: currentStepIndex,
+            remainingSeconds: Int(remainingSeconds),
+            isPaused: !isRunning
+        )
     }
 
     private func observeAppLifecycle() {
