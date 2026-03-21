@@ -1,8 +1,3 @@
----
-description: Generate a routine markdown file from a user description. Use when the user wants to create a new routine, add steps, or generate a .md routine file.
-user_invocable: true
----
-
 # Create Routine
 
 Generate a properly formatted routine markdown file that the RoutineRunner iOS app can parse.
@@ -34,36 +29,15 @@ The file MUST follow this exact format:
 - File extension must be `.md`
 - Filename should be lowercase with hyphens, e.g. `morning-routine.md`
 
+### Preference:
+- Prefer **main steps (H2 headings)** for nearly all actions
+- Break tasks into multiple sequential main steps instead of grouping under one step
+- Use sub-items (`- bullets`) **only for minor notes, clarifications, or links**
+- Avoid placing actual actionable steps inside bullet points
+
 ## Instructions
 
 1. Ask the user what the routine is about if they haven't described it
 2. Generate the markdown content following the format above
 3. Write the file to the project root or wherever the user specifies
 4. Show the user the generated content
-
-## Example
-
-For input "a 15 minute morning stretch routine", generate:
-
-# Morning Stretch
-
-## Neck rolls (2m)
-- Slow circles, both directions
-
-## Shoulder shrugs (1m 30s)
-
-## Cat-cow stretch (2m)
-- On hands and knees
-- Sync movement with breath
-
-## Standing forward fold (2m)
-
-## Quad stretch (2m)
-- 1 minute each leg
-
-## Hip circles (1m 30s)
-
-## Child's pose (2m)
-- Focus on deep breathing
-
-## Savasana (2m)
