@@ -4,6 +4,7 @@ import Foundation
 
 // MARK: - Toggle Play / Pause
 
+
 struct TogglePlayPauseIntent: LiveActivityIntent {
     static var title: LocalizedStringResource = "Toggle Play/Pause"
     static var description: IntentDescription = "Pauses or resumes the current routine step timer."
@@ -49,6 +50,7 @@ struct TogglePlayPauseIntent: LiveActivityIntent {
 
 // MARK: - Skip Step
 
+
 struct SkipStepIntent: LiveActivityIntent {
     static var title: LocalizedStringResource = "Skip Step"
     static var description: IntentDescription = "Skips to the next step in the routine."
@@ -85,6 +87,7 @@ struct SkipStepIntent: LiveActivityIntent {
 }
 
 // MARK: - Helpers
+
 
 private func updateLiveActivity(from state: RoutineTimerState) async {
     let contentState = RoutineActivityAttributes.ContentState(

@@ -103,7 +103,6 @@ struct RoutineActivitiesLiveActivity: Widget {
                         .lineLimit(1)
                 }
                 DynamicIslandExpandedRegion(.bottom) {
-                    // Controls + progress bar
                     VStack(spacing: 8) {
                         HStack(spacing: 24) {
                             Button(intent: TogglePlayPauseIntent()) {
