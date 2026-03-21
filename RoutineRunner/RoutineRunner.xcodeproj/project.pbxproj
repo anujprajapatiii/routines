@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		076850A42F6E358C00DF32CF /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 076850A32F6E358C00DF32CF /* AppIcon.icon */; };
 		A10000000000000000000001 /* RoutineRunnerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000001 /* RoutineRunnerApp.swift */; };
 		A10000000000000000000002 /* Routine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000002 /* Routine.swift */; };
 		A10000000000000000000003 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000003 /* AppSettings.swift */; };
@@ -19,45 +18,9 @@
 		A10000000000000000000009 /* RoutinePlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000009 /* RoutinePlayerView.swift */; };
 		A1000000000000000000000A /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000A /* SettingsView.swift */; };
 		A1000000000000000000000B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000B /* Assets.xcassets */; };
-		AA000000000000000000A001 /* RoutineActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000B001 /* RoutineActivityAttributes.swift */; };
-		AA000000000000000000A002 /* LiveActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000B002 /* LiveActivityManager.swift */; };
-		AA000000000000000000A003 /* RoutineActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000B001 /* RoutineActivityAttributes.swift */; };
-		AA000000000000000000A004 /* RoutineActivitiesBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000B003 /* RoutineActivitiesBundle.swift */; };
-		AA000000000000000000A005 /* RoutineActivitiesLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000B004 /* RoutineActivitiesLiveActivity.swift */; };
-		AA000000000000000000A006 /* RoutineActivities.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = AA000000000000000000C001 /* RoutineActivities.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		AA000000000000000000D001 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F10000000000000000000010 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = AA000000000000000000F001;
-			remoteInfo = RoutineActivities;
-		};
-/* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		AA000000000000000000E001 /* Embed App Extensions */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 13;
-			files = (
-				AA000000000000000000A006 /* RoutineActivities.appex in Embed App Extensions */,
-			);
-			name = "Embed App Extensions";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
-		076850A32F6E358C00DF32CF /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
-		AA000000000000000000B001 /* RoutineActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutineActivityAttributes.swift; sourceTree = "<group>"; };
-		AA000000000000000000B002 /* LiveActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityManager.swift; sourceTree = "<group>"; };
-		AA000000000000000000B003 /* RoutineActivitiesBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutineActivitiesBundle.swift; sourceTree = "<group>"; };
-		AA000000000000000000B004 /* RoutineActivitiesLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutineActivitiesLiveActivity.swift; sourceTree = "<group>"; };
-		AA000000000000000000C001 /* RoutineActivities.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = RoutineActivities.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		B10000000000000000000001 /* RoutineRunnerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutineRunnerApp.swift; sourceTree = "<group>"; };
 		B10000000000000000000002 /* Routine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Routine.swift; sourceTree = "<group>"; };
 		B10000000000000000000003 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
@@ -73,13 +36,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		AA000000000000000000E002 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		D10000000000000000000001 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -90,20 +46,10 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		AA000000000000000000E010 /* RoutineActivities */ = {
-			isa = PBXGroup;
-			children = (
-				AA000000000000000000B003 /* RoutineActivitiesBundle.swift */,
-				AA000000000000000000B004 /* RoutineActivitiesLiveActivity.swift */,
-			);
-			path = RoutineActivities;
-			sourceTree = "<group>";
-		};
 		E10000000000000000000001 = {
 			isa = PBXGroup;
 			children = (
 				E10000000000000000000002 /* Sources */,
-				AA000000000000000000E010 /* RoutineActivities */,
 				E10000000000000000000008 /* Resources */,
 				E10000000000000000000009 /* Products */,
 			);
@@ -134,7 +80,6 @@
 			children = (
 				B10000000000000000000002 /* Routine.swift */,
 				B10000000000000000000003 /* AppSettings.swift */,
-				AA000000000000000000B001 /* RoutineActivityAttributes.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -152,7 +97,6 @@
 			children = (
 				B10000000000000000000005 /* GitSyncService.swift */,
 				B10000000000000000000006 /* RoutineStore.swift */,
-				AA000000000000000000B002 /* LiveActivityManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -172,7 +116,6 @@
 			isa = PBXGroup;
 			children = (
 				B1000000000000000000000B /* Assets.xcassets */,
-				076850A32F6E358C00DF32CF /* AppIcon.icon */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -181,7 +124,6 @@
 			isa = PBXGroup;
 			children = (
 				C10000000000000000000001 /* RoutineRunner.app */,
-				AA000000000000000000C001 /* RoutineActivities.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -189,23 +131,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		AA000000000000000000F001 /* RoutineActivities */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = AA000000000000000000F010 /* Build configuration list for PBXNativeTarget "RoutineActivities" */;
-			buildPhases = (
-				AA000000000000000000E003 /* Sources */,
-				AA000000000000000000E002 /* Frameworks */,
-				AA000000000000000000E004 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = RoutineActivities;
-			productName = RoutineActivities;
-			productReference = AA000000000000000000C001 /* RoutineActivities.appex */;
-			productType = "com.apple.product-type.app-extension";
-		};
 		F10000000000000000000001 /* RoutineRunner */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = F20000000000000000000003 /* Build configuration list for PBXNativeTarget "RoutineRunner" */;
@@ -213,12 +138,10 @@
 				F10000000000000000000002 /* Sources */,
 				D10000000000000000000001 /* Frameworks */,
 				F10000000000000000000003 /* Resources */,
-				AA000000000000000000E001 /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				AA000000000000000000D002 /* PBXTargetDependency */,
 			);
 			name = RoutineRunner;
 			productName = RoutineRunner;
@@ -235,9 +158,6 @@
 				LastSwiftUpdateCheck = 1500;
 				LastUpgradeCheck = 2620;
 				TargetAttributes = {
-					AA000000000000000000F001 = {
-						CreatedOnToolsVersion = 15.0;
-					};
 					F10000000000000000000001 = {
 						CreatedOnToolsVersion = 15.0;
 					};
@@ -257,41 +177,22 @@
 			projectRoot = "";
 			targets = (
 				F10000000000000000000001 /* RoutineRunner */,
-				AA000000000000000000F001 /* RoutineActivities */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		AA000000000000000000E004 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		F10000000000000000000003 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				A1000000000000000000000B /* Assets.xcassets in Resources */,
-				076850A42F6E358C00DF32CF /* AppIcon.icon in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		AA000000000000000000E003 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				AA000000000000000000A003 /* RoutineActivityAttributes.swift in Sources */,
-				AA000000000000000000A004 /* RoutineActivitiesBundle.swift in Sources */,
-				AA000000000000000000A005 /* RoutineActivitiesLiveActivity.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		F10000000000000000000002 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -306,74 +207,12 @@
 				A10000000000000000000008 /* RoutineDetailView.swift in Sources */,
 				A10000000000000000000009 /* RoutinePlayerView.swift in Sources */,
 				A1000000000000000000000A /* SettingsView.swift in Sources */,
-				AA000000000000000000A001 /* RoutineActivityAttributes.swift in Sources */,
-				AA000000000000000000A002 /* LiveActivityManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		AA000000000000000000D002 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = AA000000000000000000F001 /* RoutineActivities */;
-			targetProxy = AA000000000000000000D001 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin XCBuildConfiguration section */
-		AA000000000000000000F020 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = UHJDRL8ZSN;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = RoutineActivities;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.personal.RoutineRunner.RoutineActivities;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		AA000000000000000000F021 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = UHJDRL8ZSN;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = RoutineActivities;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.personal.RoutineRunner.RoutineActivities;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
 		F20000000000000000000010 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -427,7 +266,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -485,7 +324,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -498,18 +337,17 @@
 		F20000000000000000000020 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = RoutineRunner;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = AppIcon;
-				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Routines;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -526,18 +364,17 @@
 		F20000000000000000000021 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = RoutineRunner;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = AppIcon;
-				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Routines;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -551,73 +388,9 @@
 			};
 			name = Release;
 		};
-<<<<<<< HEAD
-=======
-		AA000000000000000000F020 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = UHJDRL8ZSN;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = RoutineActivities;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.personal.RoutineRunner.RoutineActivities;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		AA000000000000000000F021 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = UHJDRL8ZSN;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = RoutineActivities;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.personal.RoutineRunner.RoutineActivities;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
->>>>>>> 8a6ff5054bc401f2eb811bb1c7d4f77978c209cd
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		AA000000000000000000F010 /* Build configuration list for PBXNativeTarget "RoutineActivities" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				AA000000000000000000F020 /* Debug */,
-				AA000000000000000000F021 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		F20000000000000000000001 /* Build configuration list for PBXProject "RoutineRunner" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

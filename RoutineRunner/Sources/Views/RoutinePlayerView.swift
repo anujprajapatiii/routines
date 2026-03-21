@@ -39,7 +39,6 @@ final class RoutinePlayerViewModel: ObservableObject {
         return 1.0 - (remainingSeconds / currentStep.duration)
     }
 
-    private let liveActivity = LiveActivityManager()
     private var timerCancellable: AnyCancellable?
     private var backgroundDate: Date?
     private var lifecycleCancellables = Set<AnyCancellable>()
@@ -53,13 +52,6 @@ final class RoutinePlayerViewModel: ObservableObject {
 
     func start() {
         lastResumeDate = Date()
-        liveActivity.startActivity(
-            routineTitle: routine.title,
-            totalSteps: routine.steps.count,
-            stepName: currentStep.title,
-            stepIndex: currentStepIndex,
-            remainingSeconds: remainingSeconds
-        )
         play()
     }
 
@@ -71,12 +63,6 @@ final class RoutinePlayerViewModel: ObservableObject {
         guard !isComplete else { return }
         isRunning = true
         lastResumeDate = Date()
-        liveActivity.updateActivity(
-            stepName: currentStep.title,
-            stepIndex: currentStepIndex,
-            remainingSeconds: remainingSeconds,
-            isPaused: false
-        )
         timerCancellable = Timer.publish(every: 1, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] _ in self?.tick() }
@@ -90,12 +76,6 @@ final class RoutinePlayerViewModel: ObservableObject {
         lastResumeDate = nil
         timerCancellable?.cancel()
         timerCancellable = nil
-        liveActivity.updateActivity(
-            stepName: currentStep.title,
-            stepIndex: currentStepIndex,
-            remainingSeconds: remainingSeconds,
-            isPaused: true
-        )
     }
 
     func skipForward() {
@@ -108,22 +88,10 @@ final class RoutinePlayerViewModel: ObservableObject {
         if hapticsEnabled {
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         }
-        liveActivity.updateActivity(
-            stepName: currentStep.title,
-            stepIndex: currentStepIndex,
-            remainingSeconds: remainingSeconds,
-            isPaused: !isRunning
-        )
     }
 
     func addTime(_ seconds: TimeInterval = 120) {
         remainingSeconds += seconds
-        liveActivity.updateActivity(
-            stepName: currentStep.title,
-            stepIndex: currentStepIndex,
-            remainingSeconds: remainingSeconds,
-            isPaused: !isRunning
-        )
     }
 
     private func tick() {
@@ -147,7 +115,6 @@ final class RoutinePlayerViewModel: ObservableObject {
         if hapticsEnabled {
             UINotificationFeedbackGenerator().notificationOccurred(.success)
         }
-        liveActivity.endActivity()
     }
 
     private func observeAppLifecycle() {
