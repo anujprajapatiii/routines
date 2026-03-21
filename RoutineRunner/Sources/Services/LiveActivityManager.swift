@@ -5,42 +5,42 @@ import Foundation
 final class LiveActivityManager {
     private var activity: Activity<RoutineActivityAttributes>?
 
-    func startActivity(routineTitle: String, totalSteps: Int, stepName: String, stepIndex: Int, remainingSeconds: Int) {
+    func startActivity(routineTitle: String, totalSteps: Int, state: RoutineTimerState) {
         guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
 
         let attributes = RoutineActivityAttributes(
             routineTitle: routineTitle,
             totalSteps: totalSteps
         )
-        let state = RoutineActivityAttributes.ContentState(
-            stepName: stepName,
-            stepIndex: stepIndex,
-            stepEndDate: Date().addingTimeInterval(Double(remainingSeconds)),
-            isPaused: false,
-            remainingSeconds: remainingSeconds
+        let contentState = RoutineActivityAttributes.ContentState(
+            stepName: state.stepName,
+            stepIndex: state.stepIndex,
+            stepEndDate: state.stepEndDate,
+            isPaused: state.isPaused,
+            remainingSeconds: state.remainingSeconds
         )
 
         do {
             activity = try Activity.request(
                 attributes: attributes,
-                content: .init(state: state, staleDate: nil)
+                content: .init(state: contentState, staleDate: nil)
             )
         } catch {
             print("Failed to start Live Activity: \(error)")
         }
     }
 
-    func updateActivity(stepName: String, stepIndex: Int, remainingSeconds: Int, isPaused: Bool) {
-        let state = RoutineActivityAttributes.ContentState(
-            stepName: stepName,
-            stepIndex: stepIndex,
-            stepEndDate: isPaused ? .distantFuture : Date().addingTimeInterval(Double(remainingSeconds)),
-            isPaused: isPaused,
-            remainingSeconds: remainingSeconds
+    func updateActivity(state: RoutineTimerState) {
+        let contentState = RoutineActivityAttributes.ContentState(
+            stepName: state.stepName,
+            stepIndex: state.stepIndex,
+            stepEndDate: state.stepEndDate,
+            isPaused: state.isPaused,
+            remainingSeconds: state.remainingSeconds
         )
 
         Task {
-            await activity?.update(.init(state: state, staleDate: nil))
+            await activity?.update(.init(state: contentState, staleDate: nil))
         }
     }
 

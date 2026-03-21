@@ -24,6 +24,8 @@
 		DC0000000000000000000004 /* RoutineActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0000000000000000000003 /* RoutineActivityAttributes.swift */; };
 		DC0000000000000000000005 /* RoutineActivities.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = DA0000000000000000000002 /* RoutineActivities.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		DC0000000000000000000006 /* LiveActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0000000000000000000004 /* LiveActivityManager.swift */; };
+		EE0000000000000000000001 /* RoutineTimerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0000000000000000000002 /* RoutineTimerState.swift */; };
+		EE0000000000000000000003 /* RoutineTimerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0000000000000000000002 /* RoutineTimerState.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,6 +70,9 @@
 		DB0000000000000000000002 /* RoutineActivitiesLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutineActivitiesLiveActivity.swift; sourceTree = "<group>"; };
 		DB0000000000000000000003 /* RoutineActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutineActivityAttributes.swift; sourceTree = "<group>"; };
 		DB0000000000000000000004 /* LiveActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityManager.swift; sourceTree = "<group>"; };
+		EE0000000000000000000002 /* RoutineTimerState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutineTimerState.swift; sourceTree = "<group>"; };
+		EE0000000000000000000004 /* RoutineRunner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RoutineRunner.entitlements; sourceTree = "<group>"; };
+		EE0000000000000000000005 /* RoutineActivities.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RoutineActivities.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,6 +96,7 @@
 		E10000000000000000000001 = {
 			isa = PBXGroup;
 			children = (
+				EE0000000000000000000004 /* RoutineRunner.entitlements */,
 				E10000000000000000000002 /* Sources */,
 				E10000000000000000000008 /* Resources */,
 				DD0000000000000000000001 /* RoutineActivities */,
@@ -124,6 +130,7 @@
 				B10000000000000000000002 /* Routine.swift */,
 				B10000000000000000000003 /* AppSettings.swift */,
 				DB0000000000000000000003 /* RoutineActivityAttributes.swift */,
+				EE0000000000000000000002 /* RoutineTimerState.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -179,6 +186,7 @@
 			children = (
 				DB0000000000000000000001 /* RoutineActivitiesBundle.swift */,
 				DB0000000000000000000002 /* RoutineActivitiesLiveActivity.swift */,
+				EE0000000000000000000005 /* RoutineActivities.entitlements */,
 			);
 			path = RoutineActivities;
 			sourceTree = "<group>";
@@ -294,6 +302,7 @@
 				A1000000000000000000000A /* SettingsView.swift in Sources */,
 				DC0000000000000000000004 /* RoutineActivityAttributes.swift in Sources */,
 				DC0000000000000000000006 /* LiveActivityManager.swift in Sources */,
+				EE0000000000000000000001 /* RoutineTimerState.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -304,6 +313,7 @@
 				DC0000000000000000000001 /* RoutineActivitiesBundle.swift in Sources */,
 				DC0000000000000000000002 /* RoutineActivitiesLiveActivity.swift in Sources */,
 				DC0000000000000000000003 /* RoutineActivityAttributes.swift in Sources */,
+				EE0000000000000000000003 /* RoutineTimerState.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -444,6 +454,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = RoutineRunner.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -472,6 +483,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = RoutineRunner.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -498,6 +510,7 @@
 		DA0000000000000000000007 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = RoutineActivities/RoutineActivities.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = UHJDRL8ZSN;
@@ -523,6 +536,7 @@
 		DA0000000000000000000008 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = RoutineActivities/RoutineActivities.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = UHJDRL8ZSN;

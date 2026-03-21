@@ -14,6 +14,10 @@ final class RoutinePlayerViewModel: ObservableObject {
     @Published var isRunning: Bool = false
     @Published var isComplete: Bool = false
 
+    /// The wall-clock date when the current step's timer hits zero.
+    /// This is the single source of truth — `remainingSeconds` is derived from it.
+    private var stepEndDate: Date = .distantFuture
+
     /// Wall-clock elapsed time tracked via Date
     private var pausedElapsed: TimeInterval = 0
     private var lastResumeDate: Date?
@@ -41,7 +45,6 @@ final class RoutinePlayerViewModel: ObservableObject {
 
     private let liveActivity = LiveActivityManager()
     private var timerCancellable: AnyCancellable?
-    private var backgroundDate: Date?
     private var lifecycleCancellables = Set<AnyCancellable>()
 
     init(routine: Routine, hapticsEnabled: Bool = true) {
@@ -53,12 +56,12 @@ final class RoutinePlayerViewModel: ObservableObject {
 
     func start() {
         lastResumeDate = Date()
+        stepEndDate = Date().addingTimeInterval(remainingSeconds)
+        syncSharedState()
         liveActivity.startActivity(
             routineTitle: routine.title,
             totalSteps: routine.steps.count,
-            stepName: currentStep.title,
-            stepIndex: currentStepIndex,
-            remainingSeconds: Int(remainingSeconds)
+            state: currentSharedState()
         )
         play()
     }
@@ -71,6 +74,9 @@ final class RoutinePlayerViewModel: ObservableObject {
         guard !isComplete else { return }
         isRunning = true
         lastResumeDate = Date()
+        // Recompute stepEndDate from current remainingSeconds
+        stepEndDate = Date().addingTimeInterval(remainingSeconds)
+        syncSharedState()
         updateLiveActivity()
         timerCancellable = Timer.publish(every: 1, on: .main, in: .common)
             .autoconnect()
@@ -79,12 +85,15 @@ final class RoutinePlayerViewModel: ObservableObject {
 
     func pause() {
         isRunning = false
+        // Snapshot remaining time from stepEndDate before it becomes stale
+        remainingSeconds = max(0, stepEndDate.timeIntervalSinceNow)
         if let resume = lastResumeDate {
             pausedElapsed += Date().timeIntervalSince(resume)
         }
         lastResumeDate = nil
         timerCancellable?.cancel()
         timerCancellable = nil
+        syncSharedState()
         updateLiveActivity()
     }
 
@@ -95,23 +104,24 @@ final class RoutinePlayerViewModel: ObservableObject {
         }
         currentStepIndex += 1
         remainingSeconds = currentStep.duration
+        stepEndDate = Date().addingTimeInterval(remainingSeconds)
         if hapticsEnabled {
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         }
+        syncSharedState()
         updateLiveActivity()
     }
 
     func addTime(_ seconds: TimeInterval = 120) {
         remainingSeconds += seconds
+        stepEndDate = stepEndDate.addingTimeInterval(seconds)
+        syncSharedState()
         updateLiveActivity()
     }
 
     private func tick() {
-        guard remainingSeconds > 0 else {
-            skipForward()
-            return
-        }
-        remainingSeconds -= 1
+        // Derive remaining from the canonical stepEndDate
+        remainingSeconds = max(0, stepEndDate.timeIntervalSinceNow)
         if remainingSeconds <= 0 {
             if currentStepIndex >= routine.steps.count - 1 {
                 complete()
@@ -128,50 +138,61 @@ final class RoutinePlayerViewModel: ObservableObject {
             UINotificationFeedbackGenerator().notificationOccurred(.success)
         }
         liveActivity.endActivity()
+        RoutineTimerState.clear()
     }
 
-    private func updateLiveActivity() {
-        liveActivity.updateActivity(
+    private func currentSharedState() -> RoutineTimerState {
+        RoutineTimerState(
+            routineTitle: routine.title,
+            totalSteps: routine.steps.count,
             stepName: currentStep.title,
             stepIndex: currentStepIndex,
-            remainingSeconds: Int(remainingSeconds),
-            isPaused: !isRunning
+            stepEndDate: stepEndDate,
+            isPaused: !isRunning,
+            remainingSeconds: Int(remainingSeconds)
         )
     }
 
-    private func observeAppLifecycle() {
-        NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)
-            .sink { [weak self] _ in
-                guard let self, self.isRunning else { return }
-                self.backgroundDate = Date()
-            }
-            .store(in: &lifecycleCancellables)
+    private func syncSharedState() {
+        currentSharedState().save()
+    }
 
+    private func updateLiveActivity() {
+        let state = currentSharedState()
+        liveActivity.updateActivity(state: state)
+    }
+
+    private func observeAppLifecycle() {
         NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)
             .sink { [weak self] _ in
-                guard let self, let bg = self.backgroundDate, self.isRunning else { return }
-                self.backgroundDate = nil
-                self.consumeElapsedTime(Date().timeIntervalSince(bg))
+                self?.restoreFromSharedState()
             }
             .store(in: &lifecycleCancellables)
     }
 
-    private func consumeElapsedTime(_ elapsed: TimeInterval) {
-        var remaining = elapsed
-        while remaining > 0 {
-            if remaining >= remainingSeconds {
-                remaining -= remainingSeconds
-                remainingSeconds = 0
-                if currentStepIndex >= routine.steps.count - 1 {
-                    complete()
-                    return
-                }
-                currentStepIndex += 1
-                remainingSeconds = currentStep.duration
-            } else {
-                remainingSeconds -= remaining
-                remaining = 0
-            }
+    /// When the app comes back from background, re-derive everything
+    /// from the canonical stepEndDate stored in shared state.
+    private func restoreFromSharedState() {
+        guard isRunning, let saved = RoutineTimerState.load() else { return }
+
+        // Walk forward through steps if time has elapsed past current step
+        currentStepIndex = saved.stepIndex
+        stepEndDate = saved.stepEndDate
+        remainingSeconds = max(0, stepEndDate.timeIntervalSinceNow)
+
+        // If the step ended while we were in the background, advance
+        while remainingSeconds <= 0 && currentStepIndex < routine.steps.count - 1 {
+            currentStepIndex += 1
+            let stepDuration = routine.steps[currentStepIndex].duration
+            stepEndDate = stepEndDate.addingTimeInterval(stepDuration)
+            remainingSeconds = max(0, stepEndDate.timeIntervalSinceNow)
+        }
+
+        if remainingSeconds <= 0 {
+            complete()
+        } else {
+            syncSharedState()
+            updateLiveActivity()
         }
     }
 }
