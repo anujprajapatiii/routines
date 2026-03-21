@@ -15,8 +15,9 @@ final class LiveActivityManager {
         let state = RoutineActivityAttributes.ContentState(
             stepName: stepName,
             stepIndex: stepIndex,
-            remainingSeconds: remainingSeconds,
-            isPaused: false
+            stepEndDate: Date().addingTimeInterval(Double(remainingSeconds)),
+            isPaused: false,
+            remainingSeconds: remainingSeconds
         )
 
         do {
@@ -33,8 +34,9 @@ final class LiveActivityManager {
         let state = RoutineActivityAttributes.ContentState(
             stepName: stepName,
             stepIndex: stepIndex,
-            remainingSeconds: remainingSeconds,
-            isPaused: isPaused
+            stepEndDate: isPaused ? .distantFuture : Date().addingTimeInterval(Double(remainingSeconds)),
+            isPaused: isPaused,
+            remainingSeconds: remainingSeconds
         )
 
         Task {

@@ -11,22 +11,34 @@ struct RoutineActivitiesLiveActivity: Widget {
             DynamicIsland {
                 // MARK: - Expanded
                 DynamicIslandExpandedRegion(.leading) {
-                    Label("Step \(context.state.stepIndex + 1)/\(context.attributes.totalSteps)", systemImage: "list.number")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(context.attributes.routineTitle)
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                        Label("Step \(context.state.stepIndex + 1)/\(context.attributes.totalSteps)",
+                              systemImage: "list.number")
+                            .font(.caption.weight(.medium))
+                            .foregroundStyle(.secondary)
+                    }
                 }
                 DynamicIslandExpandedRegion(.trailing) {
-                    Text(timeString(context.state.remainingSeconds))
+                    liveTimer(context: context)
                         .font(.title3.monospacedDigit().bold())
-                        .foregroundStyle(context.state.isPaused ? .secondary : .primary)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
                 }
                 DynamicIslandExpandedRegion(.bottom) {
                     VStack(spacing: 6) {
                         Text(context.state.stepName)
                             .font(.headline)
-                            .lineLimit(1)
-                        ProgressView(value: Double(context.state.stepIndex), total: Double(context.attributes.totalSteps))
-                            .tint(.white)
+                            .lineLimit(2)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+
+                        ProgressView(
+                            value: Double(context.state.stepIndex),
+                            total: Double(max(context.attributes.totalSteps, 1))
+                        )
+                        .tint(.white)
                     }
                     .padding(.top, 4)
                 }
@@ -36,7 +48,7 @@ struct RoutineActivitiesLiveActivity: Widget {
                     .foregroundStyle(.secondary)
             } compactTrailing: {
                 // MARK: - Compact Trailing
-                Text(timeString(context.state.remainingSeconds))
+                liveTimer(context: context)
                     .font(.caption.monospacedDigit().bold())
             } minimal: {
                 // MARK: - Minimal
@@ -49,30 +61,62 @@ struct RoutineActivitiesLiveActivity: Widget {
     // MARK: - Lock Screen Layout
 
     private func lockScreenView(context: ActivityViewContext<RoutineActivityAttributes>) -> some View {
-        VStack(spacing: 8) {
-            HStack {
+        VStack(spacing: 12) {
+            // Top row: routine title + timer
+            HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(context.attributes.routineTitle)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                     Text(context.state.stepName)
-                        .font(.headline)
-                        .lineLimit(1)
+                        .font(.title3.weight(.semibold))
+                        .lineLimit(2)
                 }
                 Spacer()
-                Text(timeString(context.state.remainingSeconds))
-                    .font(.title2.monospacedDigit().bold())
-                    .foregroundStyle(context.state.isPaused ? .secondary : .primary)
+                VStack(alignment: .trailing, spacing: 2) {
+                    liveTimer(context: context)
+                        .font(.title2.monospacedDigit().bold())
+                    if context.state.isPaused {
+                        Text("PAUSED")
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(.orange)
+                    } else {
+                        Text("remaining")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                }
             }
-            HStack {
-                ProgressView(value: Double(context.state.stepIndex), total: Double(context.attributes.totalSteps))
-                    .tint(.accentColor)
+
+            // Bottom row: progress bar + step counter
+            HStack(spacing: 8) {
+                ProgressView(
+                    value: Double(context.state.stepIndex),
+                    total: Double(max(context.attributes.totalSteps, 1))
+                )
+                .tint(.accentColor)
+
                 Text("\(context.state.stepIndex + 1)/\(context.attributes.totalSteps)")
-                    .font(.caption2)
+                    .font(.caption2.monospacedDigit())
                     .foregroundStyle(.secondary)
             }
         }
         .padding()
+    }
+
+    // MARK: - Live Timer
+
+    @ViewBuilder
+    private func liveTimer(context: ActivityViewContext<RoutineActivityAttributes>) -> some View {
+        if context.state.isPaused {
+            // When paused, show a frozen static time
+            Text(timeString(context.state.remainingSeconds))
+                .foregroundStyle(.secondary)
+        } else {
+            // When running, use the system live countdown
+            Text(timerInterval: Date()...context.state.stepEndDate, countsDown: true)
+                .multilineTextAlignment(.trailing)
+        }
     }
 
     // MARK: - Helpers
