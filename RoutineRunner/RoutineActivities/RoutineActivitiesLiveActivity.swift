@@ -7,6 +7,7 @@ struct RoutineActivitiesLiveActivity: Widget {
         ActivityConfiguration(for: RoutineActivityAttributes.self) { context in
             // MARK: - Lock Screen / StandBy banner
             lockScreenView(context: context)
+                .activityBackgroundTint(.black.opacity(0.75))
         } dynamicIsland: { context in
             DynamicIsland {
                 // MARK: - Expanded
@@ -27,33 +28,41 @@ struct RoutineActivitiesLiveActivity: Widget {
                         .font(.title3.monospacedDigit().bold())
                         .frame(maxWidth: .infinity, alignment: .trailing)
                 }
+                DynamicIslandExpandedRegion(.center) {
+                    Text(context.state.stepName)
+                        .font(.headline)
+                        .lineLimit(1)
+                }
                 DynamicIslandExpandedRegion(.bottom) {
-                    VStack(spacing: 6) {
-                        Text(context.state.stepName)
-                            .font(.headline)
-                            .lineLimit(2)
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                    VStack(spacing: 8) {
+                        if context.state.isPaused {
+                            Text("PAUSED")
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(.orange)
+                        }
 
                         ProgressView(
                             value: Double(context.state.stepIndex),
                             total: Double(max(context.attributes.totalSteps, 1))
                         )
-                        .tint(.white)
+                        .tint(.cyan)
                     }
                     .padding(.top, 4)
                 }
             } compactLeading: {
                 // MARK: - Compact Leading
-                Image(systemName: context.state.isPaused ? "pause.fill" : "timer")
-                    .foregroundStyle(.secondary)
+                Text(context.state.stepName)
+                    .font(.caption2.weight(.medium))
+                    .lineLimit(1)
+                    .truncationMode(.tail)
             } compactTrailing: {
                 // MARK: - Compact Trailing
                 liveTimer(context: context)
                     .font(.caption.monospacedDigit().bold())
             } minimal: {
                 // MARK: - Minimal
-                Image(systemName: "timer")
-                    .foregroundStyle(.secondary)
+                liveTimer(context: context)
+                    .font(.caption2.monospacedDigit())
             }
         }
     }
@@ -62,46 +71,48 @@ struct RoutineActivitiesLiveActivity: Widget {
 
     private func lockScreenView(context: ActivityViewContext<RoutineActivityAttributes>) -> some View {
         VStack(spacing: 12) {
-            // Top row: routine title + timer
-            HStack(alignment: .top) {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(context.attributes.routineTitle)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Text(context.state.stepName)
-                        .font(.title3.weight(.semibold))
-                        .lineLimit(2)
-                }
+            // Top row: routine title + step counter
+            HStack {
+                Text(context.attributes.routineTitle)
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(.white.opacity(0.7))
                 Spacer()
+                Text("Step \(context.state.stepIndex + 1) of \(context.attributes.totalSteps)")
+                    .font(.caption2)
+                    .foregroundStyle(.white.opacity(0.5))
+            }
+
+            // Middle row: step name + live timer
+            HStack(alignment: .center) {
+                Text(context.state.stepName)
+                    .font(.title3.weight(.semibold))
+                    .foregroundStyle(.white)
+                    .lineLimit(2)
+                Spacer(minLength: 12)
                 VStack(alignment: .trailing, spacing: 2) {
                     liveTimer(context: context)
-                        .font(.title2.monospacedDigit().bold())
+                        .font(.title.monospacedDigit().bold())
+                        .foregroundStyle(.white)
                     if context.state.isPaused {
                         Text("PAUSED")
-                            .font(.caption2.weight(.semibold))
+                            .font(.caption2.weight(.bold))
                             .foregroundStyle(.orange)
                     } else {
                         Text("remaining")
                             .font(.caption2)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(.white.opacity(0.5))
                     }
                 }
             }
 
-            // Bottom row: progress bar + step counter
-            HStack(spacing: 8) {
-                ProgressView(
-                    value: Double(context.state.stepIndex),
-                    total: Double(max(context.attributes.totalSteps, 1))
-                )
-                .tint(.accentColor)
-
-                Text("\(context.state.stepIndex + 1)/\(context.attributes.totalSteps)")
-                    .font(.caption2.monospacedDigit())
-                    .foregroundStyle(.secondary)
-            }
+            // Bottom row: progress bar
+            ProgressView(
+                value: Double(context.state.stepIndex),
+                total: Double(max(context.attributes.totalSteps, 1))
+            )
+            .tint(.cyan)
         }
-        .padding()
+        .padding(16)
     }
 
     // MARK: - Live Timer
@@ -109,11 +120,9 @@ struct RoutineActivitiesLiveActivity: Widget {
     @ViewBuilder
     private func liveTimer(context: ActivityViewContext<RoutineActivityAttributes>) -> some View {
         if context.state.isPaused {
-            // When paused, show a frozen static time
             Text(timeString(context.state.remainingSeconds))
                 .foregroundStyle(.secondary)
         } else {
-            // When running, use the system live countdown
             Text(timerInterval: Date()...context.state.stepEndDate, countsDown: true)
                 .multilineTextAlignment(.trailing)
         }
