@@ -5,28 +5,52 @@ struct RoutineHistoryView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var displayedMonth = Date()
     @State private var showClearConfirmation = false
+    @State private var selectedRoutine: String? // fileName filter, nil = all
 
     private let calendar = Calendar.current
 
     var body: some View {
         NavigationStack {
             List {
-                Section {
-                    statsRow
+                // Per-routine streak cards
+                if !historyStore.records.isEmpty {
+                    Section {
+                        ForEach(routineSummaries, id: \.fileName) { summary in
+                            routineStreakRow(summary)
+                        }
+                    } header: {
+                        Text("Streaks")
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(.primary)
+                            .textCase(nil)
+                    }
                 }
 
+                // Calendar
                 Section {
+                    // Filter picker
+                    if routineSummaries.count > 1 {
+                        Picker("Routine", selection: $selectedRoutine) {
+                            Text("All Routines").tag(nil as String?)
+                            ForEach(routineSummaries, id: \.fileName) { summary in
+                                Text(summary.title).tag(summary.fileName as String?)
+                            }
+                        }
+                        .pickerStyle(.menu)
+                    }
+
                     calendarGrid
                 } header: {
                     calendarHeader
                 }
 
+                // Recent completions
                 Section {
-                    if recentCompletions.isEmpty {
+                    if filteredCompletions.isEmpty {
                         Text("No completions yet")
                             .foregroundStyle(.secondary)
                     } else {
-                        ForEach(recentCompletions) { record in
+                        ForEach(filteredCompletions) { record in
                             completionRow(record)
                         }
                     }
@@ -63,28 +87,55 @@ struct RoutineHistoryView: View {
         }
     }
 
-    // MARK: - Stats
+    // MARK: - Per-Routine Summaries
 
-    private var statsRow: some View {
-        HStack {
-            statItem(value: historyStore.currentStreak(), label: "Current Streak")
-            Spacer()
-            statItem(value: historyStore.longestStreak(), label: "Best Streak")
-            Spacer()
-            statItem(value: historyStore.totalCompletions, label: "Total")
-        }
-        .padding(.vertical, 4)
+    private struct RoutineSummary {
+        let fileName: String
+        let title: String
+        let currentStreak: Int
+        let bestStreak: Int
+        let total: Int
     }
 
-    private func statItem(value: Int, label: String) -> some View {
-        VStack(spacing: 4) {
-            Text("\(value)")
-                .font(.title2.weight(.bold))
-            Text(label)
+    private var routineSummaries: [RoutineSummary] {
+        historyStore.trackedRoutineFileNames
+            .map { fileName in
+                RoutineSummary(
+                    fileName: fileName,
+                    title: historyStore.latestTitle(for: fileName),
+                    currentStreak: historyStore.currentStreak(for: fileName),
+                    bestStreak: historyStore.longestStreak(for: fileName),
+                    total: historyStore.totalCompletions(for: fileName)
+                )
+            }
+            .sorted { $0.currentStreak > $1.currentStreak }
+    }
+
+    private func routineStreakRow(_ summary: RoutineSummary) -> some View {
+        HStack(spacing: 12) {
+            // Streak flame
+            VStack(spacing: 2) {
+                Text("\(summary.currentStreak)")
+                    .font(.title2.weight(.bold))
+                    .foregroundStyle(summary.currentStreak > 0 ? .orange : .secondary)
+                Image(systemName: "flame.fill")
+                    .font(.caption)
+                    .foregroundStyle(summary.currentStreak > 0 ? .orange : .secondary.opacity(0.4))
+            }
+            .frame(width: 44)
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(summary.title)
+                    .font(.body.weight(.medium))
+                HStack(spacing: 12) {
+                    Label("\(summary.total) total", systemImage: "checkmark.circle")
+                    Label("Best: \(summary.bestStreak)", systemImage: "trophy")
+                }
                 .font(.caption)
                 .foregroundStyle(.secondary)
+            }
         }
-        .frame(maxWidth: .infinity)
+        .padding(.vertical, 2)
     }
 
     // MARK: - Calendar
@@ -116,11 +167,15 @@ struct RoutineHistoryView: View {
 
     private var calendarGrid: some View {
         let days = daysInMonth()
-        let completionDays = historyStore.allCompletionDays()
+        let completionDays: Set<DateComponents>
+        if let fileName = selectedRoutine {
+            completionDays = historyStore.completionDays(for: fileName)
+        } else {
+            completionDays = historyStore.allCompletionDays()
+        }
         let today = calendar.dateComponents([.year, .month, .day], from: Date())
 
         return VStack(spacing: 6) {
-            // Weekday headers
             HStack(spacing: 0) {
                 ForEach(["S", "M", "T", "W", "T", "F", "S"], id: \.self) { day in
                     Text(day)
@@ -130,11 +185,9 @@ struct RoutineHistoryView: View {
                 }
             }
 
-            // Day grid
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 0), count: 7), spacing: 6) {
                 ForEach(days, id: \.self) { components in
                     if components.day == nil {
-                        // Empty cell for padding
                         Text("")
                             .frame(height: 32)
                     } else {
@@ -160,8 +213,14 @@ struct RoutineHistoryView: View {
 
     // MARK: - Recent Completions
 
-    private var recentCompletions: [CompletionRecord] {
-        historyStore.records.sorted { $0.date > $1.date }.prefix(20).map { $0 }
+    private var filteredCompletions: [CompletionRecord] {
+        let source: [CompletionRecord]
+        if let fileName = selectedRoutine {
+            source = historyStore.completions(for: fileName)
+        } else {
+            source = historyStore.records.sorted { $0.date > $1.date }
+        }
+        return Array(source.prefix(20))
     }
 
     private func completionRow(_ record: CompletionRecord) -> some View {
@@ -202,22 +261,18 @@ struct RoutineHistoryView: View {
         }
     }
 
-    /// Returns DateComponents for each cell in the month grid.
-    /// Leading empty cells have day == nil.
     private func daysInMonth() -> [DateComponents] {
         let comps = calendar.dateComponents([.year, .month], from: displayedMonth)
         guard let firstOfMonth = calendar.date(from: comps),
               let range = calendar.range(of: .day, in: .month, for: firstOfMonth) else { return [] }
 
-        let weekdayOfFirst = calendar.component(.weekday, from: firstOfMonth) // 1 = Sunday
+        let weekdayOfFirst = calendar.component(.weekday, from: firstOfMonth)
         let leadingBlanks = weekdayOfFirst - 1
 
         var cells: [DateComponents] = []
-        // Leading blanks
         for _ in 0..<leadingBlanks {
             cells.append(DateComponents())
         }
-        // Actual days
         for day in range {
             var dc = comps
             dc.day = day

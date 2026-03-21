@@ -86,48 +86,40 @@ final class RoutineHistoryStore: ObservableObject {
         )
     }
 
-    /// Current streak: consecutive days ending today (or yesterday) with at least one completion.
-    func currentStreak() -> Int {
-        streak(from: Date())
-    }
-
-    /// Longest streak ever recorded.
-    func longestStreak() -> Int {
-        guard !records.isEmpty else { return 0 }
-        let cal = Calendar.current
-        let sortedDays = allCompletionDays()
-            .compactMap { cal.date(from: $0) }
-            .sorted()
-
-        guard !sortedDays.isEmpty else { return 0 }
-
-        var best = 1
-        var current = 1
-        for i in 1..<sortedDays.count {
-            if cal.isDate(sortedDays[i], inSameDayAs: sortedDays[i - 1]) {
-                continue
-            } else if let expected = cal.date(byAdding: .day, value: 1, to: sortedDays[i - 1]),
-                      cal.isDate(sortedDays[i], inSameDayAs: expected) {
-                current += 1
-                best = max(best, current)
-            } else {
-                current = 1
-            }
-        }
-        return best
-    }
-
     /// Total number of completions.
     var totalCompletions: Int { records.count }
 
+    /// Total completions for a specific routine.
+    func totalCompletions(for fileName: String) -> Int {
+        records.filter { $0.routineFileName == fileName }.count
+    }
+
+    /// Current streak for a specific routine.
+    func currentStreak(for fileName: String) -> Int {
+        streak(from: Date(), days: completionDays(for: fileName))
+    }
+
+    /// Longest streak for a specific routine.
+    func longestStreak(for fileName: String) -> Int {
+        bestStreak(in: completionDays(for: fileName))
+    }
+
+    /// All unique routine fileNames that have history.
+    var trackedRoutineFileNames: Set<String> {
+        Set(records.map(\.routineFileName))
+    }
+
+    /// Most recent title recorded for a given fileName.
+    func latestTitle(for fileName: String) -> String {
+        completions(for: fileName).first?.routineTitle ?? fileName
+    }
+
     // MARK: - Private
 
-    private func streak(from date: Date) -> Int {
+    private func streak(from date: Date, days: Set<DateComponents>) -> Int {
         let cal = Calendar.current
-        let days = allCompletionDays()
-
         var check = cal.dateComponents([.year, .month, .day], from: date)
-        // If today doesn't have a completion, start from yesterday
+
         if !days.contains(check) {
             guard let yesterday = cal.date(byAdding: .day, value: -1, to: date) else { return 0 }
             check = cal.dateComponents([.year, .month, .day], from: yesterday)
@@ -142,6 +134,27 @@ final class RoutineHistoryStore: ObservableObject {
             check = cal.dateComponents([.year, .month, .day], from: dayBefore)
         }
         return count
+    }
+
+    private func bestStreak(in days: Set<DateComponents>) -> Int {
+        let cal = Calendar.current
+        let sorted = days.compactMap { cal.date(from: $0) }.sorted()
+        guard !sorted.isEmpty else { return 0 }
+
+        var best = 1
+        var current = 1
+        for i in 1..<sorted.count {
+            if cal.isDate(sorted[i], inSameDayAs: sorted[i - 1]) {
+                continue
+            } else if let expected = cal.date(byAdding: .day, value: 1, to: sorted[i - 1]),
+                      cal.isDate(sorted[i], inSameDayAs: expected) {
+                current += 1
+                best = max(best, current)
+            } else {
+                current = 1
+            }
+        }
+        return best
     }
 
     private func load() {

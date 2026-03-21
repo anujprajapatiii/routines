@@ -59,15 +59,13 @@ struct RoutineListView: View {
 
     private var routinesList: some View {
         List {
-            if historyStore.totalCompletions > 0 {
-                Section {
-                    streakBanner
-                }
-            }
             ForEach(store.routines) { routine in
                 NavigationLink(destination: RoutineDetailView(routine: routine)) {
                     HStack(spacing: 16) {
-                        VStack(alignment: .leading, spacing: 16) {
+                        // Per-routine streak badge
+                        streakBadge(for: routine.fileName)
+
+                        VStack(alignment: .leading, spacing: 6) {
                             Text(routine.title)
                                 .font(.body.weight(.semibold))
                                 .foregroundStyle(.primary)
@@ -76,6 +74,7 @@ struct RoutineListView: View {
                                 Label(formatDuration(routine.totalDuration), systemImage: "clock")
                             }
                             .font(.subheadline)
+                            .foregroundStyle(.secondary)
                         }
                         Spacer()
                         Button {
@@ -87,6 +86,7 @@ struct RoutineListView: View {
                         }
                         .buttonStyle(.plain)
                     }
+                    .padding(.vertical, 4)
                 }
             }
         }
@@ -98,43 +98,17 @@ struct RoutineListView: View {
         }
     }
 
-    private var streakBanner: some View {
-        HStack(spacing: 16) {
-            VStack(spacing: 2) {
-                Text("\(historyStore.currentStreak())")
-                    .font(.title.weight(.bold))
-                Text("streak")
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-            }
-            .frame(width: 56)
-
-            Divider()
-                .frame(height: 32)
-
-            VStack(spacing: 2) {
-                Text("\(historyStore.totalCompletions)")
-                    .font(.title.weight(.bold))
-                Text("total")
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-            }
-            .frame(width: 56)
-
-            Divider()
-                .frame(height: 32)
-
-            VStack(spacing: 2) {
-                Text("\(historyStore.longestStreak())")
-                    .font(.title.weight(.bold))
-                Text("best")
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-            }
-            .frame(width: 56)
+    private func streakBadge(for fileName: String) -> some View {
+        let streak = historyStore.currentStreak(for: fileName)
+        return VStack(spacing: 2) {
+            Text("\(streak)")
+                .font(.title3.weight(.bold))
+                .foregroundStyle(streak > 0 ? .orange : .secondary)
+            Image(systemName: "flame.fill")
+                .font(.caption2)
+                .foregroundStyle(streak > 0 ? .orange : .secondary.opacity(0.4))
         }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 4)
+        .frame(width: 40)
     }
 
     private var emptyState: some View {
