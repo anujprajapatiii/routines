@@ -6,6 +6,9 @@ final class LiveActivityManager {
     private var activity: Activity<RoutineActivityAttributes>?
 
     func startActivity(routineTitle: String, totalSteps: Int, state: RoutineTimerState) {
+        // End any lingering activities before starting a new one
+        endAllActivities()
+
         guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
 
         let attributes = RoutineActivityAttributes(
@@ -45,9 +48,18 @@ final class LiveActivityManager {
     }
 
     func endActivity() {
+        endAllActivities()
+    }
+
+    /// End every live activity of this type, not just the one we hold a reference to.
+    private func endAllActivities() {
+        let current = activity
+        activity = nil
         Task {
-            await activity?.end(nil, dismissalPolicy: .immediate)
-            activity = nil
+            await current?.end(nil, dismissalPolicy: .immediate)
+            for activity in Activity<RoutineActivityAttributes>.activities {
+                await activity.end(nil, dismissalPolicy: .immediate)
+            }
         }
     }
 }
