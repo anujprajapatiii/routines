@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		077F46A12F6E7BCF00EBED71 /* RoutineHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 077F46A02F6E7BCF00EBED71 /* RoutineHistory.swift */; };
+		077F46A32F6E7BE600EBED71 /* RoutineIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 077F46A22F6E7BE600EBED71 /* RoutineIntents.swift */; };
+		077F46A52F6E7D1F00EBED71 /* RoutineHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 077F46A42F6E7D1F00EBED71 /* RoutineHistoryView.swift */; };
 		A10000000000000000000001 /* RoutineRunnerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000001 /* RoutineRunnerApp.swift */; };
 		A10000000000000000000002 /* Routine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000002 /* Routine.swift */; };
 		A10000000000000000000003 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000003 /* AppSettings.swift */; };
@@ -53,6 +56,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		077F46A02F6E7BCF00EBED71 /* RoutineHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutineHistory.swift; sourceTree = "<group>"; };
+		077F46A22F6E7BE600EBED71 /* RoutineIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutineIntents.swift; sourceTree = "<group>"; };
+		077F46A42F6E7D1F00EBED71 /* RoutineHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutineHistoryView.swift; sourceTree = "<group>"; };
 		B10000000000000000000001 /* RoutineRunnerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutineRunnerApp.swift; sourceTree = "<group>"; };
 		B10000000000000000000002 /* Routine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Routine.swift; sourceTree = "<group>"; };
 		B10000000000000000000003 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
@@ -93,6 +99,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		DD0000000000000000000001 /* RoutineActivities */ = {
+			isa = PBXGroup;
+			children = (
+				077F46A22F6E7BE600EBED71 /* RoutineIntents.swift */,
+				DB0000000000000000000001 /* RoutineActivitiesBundle.swift */,
+				DB0000000000000000000002 /* RoutineActivitiesLiveActivity.swift */,
+				EE0000000000000000000005 /* RoutineActivities.entitlements */,
+			);
+			path = RoutineActivities;
+			sourceTree = "<group>";
+		};
 		E10000000000000000000001 = {
 			isa = PBXGroup;
 			children = (
@@ -127,6 +144,7 @@
 		E10000000000000000000004 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				077F46A02F6E7BCF00EBED71 /* RoutineHistory.swift */,
 				B10000000000000000000002 /* Routine.swift */,
 				B10000000000000000000003 /* AppSettings.swift */,
 				DB0000000000000000000003 /* RoutineActivityAttributes.swift */,
@@ -156,6 +174,7 @@
 		E10000000000000000000007 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				077F46A42F6E7D1F00EBED71 /* RoutineHistoryView.swift */,
 				B10000000000000000000007 /* RoutineListView.swift */,
 				B10000000000000000000008 /* RoutineDetailView.swift */,
 				B10000000000000000000009 /* RoutinePlayerView.swift */,
@@ -181,19 +200,26 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		DD0000000000000000000001 /* RoutineActivities */ = {
-			isa = PBXGroup;
-			children = (
-				DB0000000000000000000001 /* RoutineActivitiesBundle.swift */,
-				DB0000000000000000000002 /* RoutineActivitiesLiveActivity.swift */,
-				EE0000000000000000000005 /* RoutineActivities.entitlements */,
-			);
-			path = RoutineActivities;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		DA0000000000000000000001 /* RoutineActivities */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DA0000000000000000000006 /* Build configuration list for PBXNativeTarget "RoutineActivities" */;
+			buildPhases = (
+				DA0000000000000000000003 /* Sources */,
+				DA0000000000000000000004 /* Frameworks */,
+				DA0000000000000000000005 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RoutineActivities;
+			productName = RoutineActivities;
+			productReference = DA0000000000000000000002 /* RoutineActivities.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		F10000000000000000000001 /* RoutineRunner */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = F20000000000000000000003 /* Build configuration list for PBXNativeTarget "RoutineRunner" */;
@@ -213,23 +239,6 @@
 			productReference = C10000000000000000000001 /* RoutineRunner.app */;
 			productType = "com.apple.product-type.application";
 		};
-		DA0000000000000000000001 /* RoutineActivities */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = DA0000000000000000000006 /* Build configuration list for PBXNativeTarget "RoutineActivities" */;
-			buildPhases = (
-				DA0000000000000000000003 /* Sources */,
-				DA0000000000000000000004 /* Frameworks */,
-				DA0000000000000000000005 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = RoutineActivities;
-			productName = RoutineActivities;
-			productReference = DA0000000000000000000002 /* RoutineActivities.appex */;
-			productType = "com.apple.product-type.app-extension";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -240,10 +249,10 @@
 				LastSwiftUpdateCheck = 1500;
 				LastUpgradeCheck = 2620;
 				TargetAttributes = {
-					F10000000000000000000001 = {
+					DA0000000000000000000001 = {
 						CreatedOnToolsVersion = 15.0;
 					};
-					DA0000000000000000000001 = {
+					F10000000000000000000001 = {
 						CreatedOnToolsVersion = 15.0;
 					};
 				};
@@ -268,6 +277,13 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		DA0000000000000000000005 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F10000000000000000000003 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -276,20 +292,26 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		DA0000000000000000000005 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		DA0000000000000000000003 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DC0000000000000000000001 /* RoutineActivitiesBundle.swift in Sources */,
+				DC0000000000000000000002 /* RoutineActivitiesLiveActivity.swift in Sources */,
+				077F46A32F6E7BE600EBED71 /* RoutineIntents.swift in Sources */,
+				DC0000000000000000000003 /* RoutineActivityAttributes.swift in Sources */,
+				EE0000000000000000000003 /* RoutineTimerState.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F10000000000000000000002 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				077F46A52F6E7D1F00EBED71 /* RoutineHistoryView.swift in Sources */,
 				A10000000000000000000001 /* RoutineRunnerApp.swift in Sources */,
 				A10000000000000000000002 /* Routine.swift in Sources */,
 				A10000000000000000000003 /* AppSettings.swift in Sources */,
@@ -303,17 +325,7 @@
 				DC0000000000000000000004 /* RoutineActivityAttributes.swift in Sources */,
 				DC0000000000000000000006 /* LiveActivityManager.swift in Sources */,
 				EE0000000000000000000001 /* RoutineTimerState.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DA0000000000000000000003 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				DC0000000000000000000001 /* RoutineActivitiesBundle.swift in Sources */,
-				DC0000000000000000000002 /* RoutineActivitiesLiveActivity.swift in Sources */,
-				DC0000000000000000000003 /* RoutineActivityAttributes.swift in Sources */,
-				EE0000000000000000000003 /* RoutineTimerState.swift in Sources */,
+				077F46A12F6E7BCF00EBED71 /* RoutineHistory.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -328,6 +340,58 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		DA0000000000000000000007 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = RoutineActivities/RoutineActivities.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = UHJDRL8ZSN;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RoutineActivities/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = RoutineActivities;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.personal.RoutineRunner.RoutineActivities;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		DA0000000000000000000008 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = RoutineActivities/RoutineActivities.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = UHJDRL8ZSN;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RoutineActivities/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = RoutineActivities;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.personal.RoutineRunner.RoutineActivities;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		F20000000000000000000010 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -464,7 +528,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -493,7 +557,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -507,61 +571,18 @@
 			};
 			name = Release;
 		};
-		DA0000000000000000000007 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = RoutineActivities/RoutineActivities.entitlements;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = UHJDRL8ZSN;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = RoutineActivities/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = RoutineActivities;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.personal.RoutineRunner.RoutineActivities;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		DA0000000000000000000008 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = RoutineActivities/RoutineActivities.entitlements;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = UHJDRL8ZSN;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = RoutineActivities/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = RoutineActivities;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.personal.RoutineRunner.RoutineActivities;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		DA0000000000000000000006 /* Build configuration list for PBXNativeTarget "RoutineActivities" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DA0000000000000000000007 /* Debug */,
+				DA0000000000000000000008 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		F20000000000000000000001 /* Build configuration list for PBXProject "RoutineRunner" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -576,15 +597,6 @@
 			buildConfigurations = (
 				F20000000000000000000020 /* Debug */,
 				F20000000000000000000021 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		DA0000000000000000000006 /* Build configuration list for PBXNativeTarget "RoutineActivities" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				DA0000000000000000000007 /* Debug */,
-				DA0000000000000000000008 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
