@@ -1,21 +1,9 @@
 # Morning Routine
 
-## Hydrate (1m)
-- Drink a full glass of water
-- Add lemon if available
+## Hydrate (2m)
+- Chug 500ml
 
-## Stretch (5m)
-- [Follow this stretch routine](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
-- Focus on neck and shoulders
+## Grounding Routine (40m)
+- [Follow this stretch routine](https://www.youtube.com/watch?v=0pbuvhbg7po)
 
 ## Brush teeth (3m)
-- Use electric toothbrush
-- Don't forget to floss
-
-## Meditation (10m)
-- Sit comfortably, close eyes
-- Focus on breathing
-
-## Review day plan (5m)
-- Check calendar
-- Pick top 3 priorities
