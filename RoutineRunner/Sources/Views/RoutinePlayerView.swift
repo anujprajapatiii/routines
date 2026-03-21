@@ -54,6 +54,14 @@ final class RoutinePlayerViewModel: ObservableObject {
         observeAppLifecycle()
     }
 
+    /// End the Live Activity and clean up when the player is dismissed.
+    func cancel() {
+        timerCancellable?.cancel()
+        timerCancellable = nil
+        liveActivity.endActivity()
+        RoutineTimerState.clear()
+    }
+
     func start() {
         lastResumeDate = Date()
         stepEndDate = Date().addingTimeInterval(remainingSeconds)
@@ -253,7 +261,10 @@ struct RoutinePlayerView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     if !viewModel.isComplete {
-                        Button("Close") { dismiss() }
+                        Button("Close") {
+                            viewModel.cancel()
+                            dismiss()
+                        }
                     }
                 }
                 ToolbarItem(placement: .principal) {
@@ -263,6 +274,11 @@ struct RoutinePlayerView: View {
             }
             .onAppear {
                 viewModel.start()
+            }
+            .onDisappear {
+                if !viewModel.isComplete {
+                    viewModel.cancel()
+                }
             }
         }
     }
