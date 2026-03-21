@@ -22,11 +22,13 @@ struct RoutineActivitiesLiveActivity: Widget {
                             .font(.caption.weight(.medium))
                             .foregroundStyle(.secondary)
                     }
+                    .padding(.leading, 4)
                 }
                 DynamicIslandExpandedRegion(.trailing) {
                     liveTimer(context: context)
                         .font(.title3.monospacedDigit().bold())
                         .frame(maxWidth: .infinity, alignment: .trailing)
+                        .padding(.trailing, 4)
                 }
                 DynamicIslandExpandedRegion(.center) {
                     Text(context.state.stepName)
@@ -48,21 +50,29 @@ struct RoutineActivitiesLiveActivity: Widget {
                         .tint(.cyan)
                     }
                     .padding(.top, 4)
+                    .padding(.horizontal, 4)
                 }
             } compactLeading: {
                 // MARK: - Compact Leading
-                Text(context.state.stepName)
-                    .font(.caption2.weight(.medium))
-                    .lineLimit(1)
-                    .truncationMode(.tail)
+                HStack(spacing: 4) {
+                    Circle()
+                        .fill(.green)
+                        .frame(width: 6, height: 6)
+                    Text(context.state.stepName)
+                        .font(.caption2.weight(.medium))
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                }
+                .frame(maxWidth: 64)
             } compactTrailing: {
                 // MARK: - Compact Trailing
                 liveTimer(context: context)
                     .font(.caption.monospacedDigit().bold())
             } minimal: {
                 // MARK: - Minimal
-                liveTimer(context: context)
-                    .font(.caption2.monospacedDigit())
+                Circle()
+                    .fill(.green)
+                    .frame(width: 6, height: 6)
             }
         }
     }
@@ -71,8 +81,11 @@ struct RoutineActivitiesLiveActivity: Widget {
 
     private func lockScreenView(context: ActivityViewContext<RoutineActivityAttributes>) -> some View {
         VStack(spacing: 12) {
-            // Top row: routine title + step counter
-            HStack {
+            // Top row: live indicator + routine title + step counter
+            HStack(spacing: 6) {
+                Circle()
+                    .fill(.green)
+                    .frame(width: 8, height: 8)
                 Text(context.attributes.routineTitle)
                     .font(.caption.weight(.medium))
                     .foregroundStyle(.white.opacity(0.7))
