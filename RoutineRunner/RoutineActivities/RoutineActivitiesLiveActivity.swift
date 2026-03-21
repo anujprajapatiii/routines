@@ -58,12 +58,10 @@ struct RoutineActivitiesLiveActivity: Widget {
                     Circle()
                         .fill(.green)
                         .frame(width: 6, height: 6)
-                    Text(context.state.stepName)
-                        .font(.caption2.weight(.medium))
-                        .lineLimit(1)
-                        .truncationMode(.tail)
+                    Image(systemName: context.state.isPaused ? "pause.fill" : "timer")
+                        .font(.caption2)
+                        .foregroundStyle(.white)
                 }
-                .frame(maxWidth: 64)
             } compactTrailing: {
                 // MARK: - Compact Trailing
                 liveTimer(context: context)
