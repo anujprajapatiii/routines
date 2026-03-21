@@ -12,16 +12,21 @@ final class RoutinePlayerViewModel: ObservableObject {
     @Published var isRunning: Bool = false
     @Published var isComplete: Bool = false
 
-    /// Total elapsed time across all completed steps + time spent on current step
-    var elapsedTime: TimeInterval {
-        let completedTime = routine.steps.prefix(currentStepIndex).reduce(0) { $0 + $1.duration }
-        let currentStepElapsed = currentStep.duration - remainingSeconds
-        return completedTime + currentStepElapsed
+    /// Wall-clock elapsed time tracked via Date
+    @Published private var startDate: Date?
+    @Published private var pausedElapsed: TimeInterval = 0
+    private var lastResumeDate: Date?
+
+    var totalElapsedTime: TimeInterval {
+        let running = lastResumeDate.map { Date().timeIntervalSince($0) } ?? 0
+        return pausedElapsed + running
     }
 
     var overallProgress: Double {
         guard routine.totalDuration > 0 else { return 0 }
-        return elapsedTime / routine.totalDuration
+        let completedTime = routine.steps.prefix(currentStepIndex).reduce(0) { $0 + $1.duration }
+        let currentStepElapsed = currentStep.duration - remainingSeconds
+        return (completedTime + currentStepElapsed) / routine.totalDuration
     }
 
     var currentStep: Step {
@@ -40,6 +45,12 @@ final class RoutinePlayerViewModel: ObservableObject {
         self.remainingSeconds = routine.steps.first?.duration ?? 0
     }
 
+    func start() {
+        startDate = Date()
+        lastResumeDate = Date()
+        play()
+    }
+
     func togglePlayPause() {
         if isRunning {
             pause()
@@ -51,6 +62,7 @@ final class RoutinePlayerViewModel: ObservableObject {
     func play() {
         guard !isComplete else { return }
         isRunning = true
+        lastResumeDate = Date()
         timerCancellable = Timer.publish(every: 1, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] _ in
@@ -60,6 +72,10 @@ final class RoutinePlayerViewModel: ObservableObject {
 
     func pause() {
         isRunning = false
+        if let resume = lastResumeDate {
+            pausedElapsed += Date().timeIntervalSince(resume)
+        }
+        lastResumeDate = nil
         timerCancellable?.cancel()
         timerCancellable = nil
     }
@@ -71,21 +87,6 @@ final class RoutinePlayerViewModel: ObservableObject {
         }
         currentStepIndex += 1
         remainingSeconds = currentStep.duration
-    }
-
-    func skipBack() {
-        if remainingSeconds < currentStep.duration {
-            // Reset current step
-            remainingSeconds = currentStep.duration
-        } else if currentStepIndex > 0 {
-            // Go to previous step
-            currentStepIndex -= 1
-            remainingSeconds = currentStep.duration
-        }
-    }
-
-    func addTime(_ seconds: TimeInterval) {
-        remainingSeconds = max(0, remainingSeconds + seconds)
     }
 
     private func tick() {
@@ -133,14 +134,17 @@ struct RoutinePlayerView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Close") {
-                        dismiss()
+                    if !viewModel.isComplete {
+                        Button("Close") { dismiss() }
                     }
                 }
                 ToolbarItem(placement: .principal) {
                     Text(viewModel.routine.title)
                         .font(.headline)
                 }
+            }
+            .onAppear {
+                viewModel.start()
             }
         }
     }
@@ -168,9 +172,6 @@ struct RoutinePlayerView: View {
 
             // Controls
             controlsBar
-
-            // Time adjust
-            timeAdjustBar
         }
         .padding()
     }
@@ -182,7 +183,7 @@ struct RoutinePlayerView: View {
             HStack {
                 Text("Step \(viewModel.currentStepIndex + 1) of \(viewModel.routine.steps.count)")
                 Spacer()
-                Text(formatDuration(viewModel.routine.totalDuration - viewModel.elapsedTime) + " left")
+                Text(formatDuration(viewModel.routine.totalDuration * (1 - viewModel.overallProgress)) + " left")
             }
             .font(.caption)
             .foregroundStyle(.secondary)
@@ -250,43 +251,22 @@ struct RoutinePlayerView: View {
     }
 
     private var controlsBar: some View {
-        HStack(spacing: 32) {
-            Button { viewModel.skipBack() } label: {
-                Image(systemName: "backward.fill")
-                    .font(.title2)
-            }
-
+        HStack(spacing: 40) {
             Button { viewModel.togglePlayPause() } label: {
                 Image(systemName: viewModel.isRunning ? "pause.circle.fill" : "play.circle.fill")
                     .font(.system(size: 64))
             }
 
-            Button { viewModel.skipForward() } label: {
-                Image(systemName: "forward.fill")
-                    .font(.title2)
+            Button {
+                viewModel.skipForward()
+            } label: {
+                Text("Done")
+                    .font(.headline)
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 12)
             }
+            .buttonStyle(.borderedProminent)
         }
-    }
-
-    private var timeAdjustBar: some View {
-        HStack(spacing: 24) {
-            Button { viewModel.addTime(-60) } label: {
-                Text("-1m")
-                    .font(.subheadline.weight(.medium))
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .background(.secondary.opacity(0.12), in: Capsule())
-            }
-
-            Button { viewModel.addTime(60) } label: {
-                Text("+1m")
-                    .font(.subheadline.weight(.medium))
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .background(.secondary.opacity(0.12), in: Capsule())
-            }
-        }
-        .foregroundStyle(.primary)
     }
 
     // MARK: - Completion
@@ -302,6 +282,9 @@ struct RoutinePlayerView: View {
             Text(viewModel.routine.title)
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
+            Text("Total time: \(formatDuration(viewModel.totalElapsedTime))")
+                .font(.headline)
+                .padding(.top, 4)
             Button("Done") { dismiss() }
                 .buttonStyle(.borderedProminent)
                 .padding(.top)

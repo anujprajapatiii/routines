@@ -2,6 +2,7 @@ import SwiftUI
 
 struct RoutineListView: View {
     @EnvironmentObject private var store: RoutineStore
+    @AppStorage("isDarkMode") private var isDarkMode = false
     @State private var showSettings = false
 
     var body: some View {
@@ -16,8 +17,15 @@ struct RoutineListView: View {
             .navigationTitle("Routines")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button { showSettings = true } label: {
-                        Image(systemName: "gear")
+                    HStack(spacing: 16) {
+                        Button {
+                            isDarkMode.toggle()
+                        } label: {
+                            Image(systemName: isDarkMode ? "moon.fill" : "moon")
+                        }
+                        Button { showSettings = true } label: {
+                            Image(systemName: "gear")
+                        }
                     }
                 }
             }

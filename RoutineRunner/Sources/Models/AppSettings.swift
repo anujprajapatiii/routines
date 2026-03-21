@@ -8,6 +8,7 @@ final class AppSettings: ObservableObject {
     @AppStorage("subfolderPath") var subfolderPath: String = ""
     @AppStorage("branch") var branch: String = ""
     @AppStorage("autoSyncOnLaunch") var autoSyncOnLaunch: Bool = true
+    @AppStorage("isDarkMode") var isDarkMode: Bool = false
 
     var isConfigured: Bool {
         !repoOwner.isEmpty && !repoName.isEmpty
