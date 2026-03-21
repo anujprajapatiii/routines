@@ -11,13 +11,23 @@ struct RoutineListView: View {
 
     var body: some View {
         NavigationStack {
-            Group {
+            ScrollView {
                 if store.routines.isEmpty {
                     emptyState
+                        .frame(maxWidth: .infinity)
+                        .padding(.top, 80)
                 } else {
-                    routinesList
+                    LazyVStack(spacing: 16) {
+                        ForEach(store.routines) { routine in
+                            routineCard(routine)
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.top, 8)
+                    .padding(.bottom, 24)
                 }
             }
+            .background(Color(.systemGroupedBackground))
             .navigationTitle("Routines")
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -54,62 +64,85 @@ struct RoutineListView: View {
                     await store.sync(historyStore: historyStore)
                 }
             }
-        }
-    }
-
-    private var routinesList: some View {
-        List {
-            ForEach(store.routines) { routine in
-                NavigationLink(destination: RoutineDetailView(routine: routine)) {
-                    HStack(spacing: 16) {
-                        // Per-routine streak badge
-                        streakBadge(for: routine.fileName)
-
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text(routine.title)
-                                .font(.body.weight(.semibold))
-                                .foregroundStyle(.primary)
-                            HStack(spacing: 16) {
-                                Label("\(routine.steps.count) steps", systemImage: "list.number")
-                                Label(formatDuration(routine.totalDuration), systemImage: "clock")
-                            }
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                        }
-                        Spacer()
-                        Button {
-                            selectedRoutineForPlayer = routine
-                        } label: {
-                            Image(systemName: "play.circle.fill")
-                                .font(.system(size: 40))
-                                .foregroundStyle(.tint)
-                        }
-                        .buttonStyle(.plain)
-                    }
-                    .padding(.vertical, 4)
+            .fullScreenCover(item: $selectedRoutineForPlayer) { routine in
+                RoutinePlayerView(routine: routine, routineCompleted: $routineCompleted, hapticsEnabled: store.settings.hapticsEnabled) { record in
+                    historyStore.record(record)
                 }
             }
         }
-        .listStyle(.insetGrouped)
-        .fullScreenCover(item: $selectedRoutineForPlayer) { routine in
-            RoutinePlayerView(routine: routine, routineCompleted: $routineCompleted, hapticsEnabled: store.settings.hapticsEnabled) { record in
-                historyStore.record(record)
-            }
-        }
     }
 
-    private func streakBadge(for fileName: String) -> some View {
-        let streak = historyStore.currentStreak(for: fileName)
-        return VStack(spacing: 2) {
-            Text("\(streak)")
-                .font(.title3.weight(.bold))
-                .foregroundStyle(streak > 0 ? .orange : .secondary)
-            Image(systemName: "flame.fill")
-                .font(.caption2)
-                .foregroundStyle(streak > 0 ? .orange : .secondary.opacity(0.4))
+    // MARK: - Routine Card
+
+    private func routineCard(_ routine: Routine) -> some View {
+        let streak = historyStore.currentStreak(for: routine.fileName)
+        let total = historyStore.totalCompletions(for: routine.fileName)
+
+        return NavigationLink(destination: RoutineDetailView(routine: routine)) {
+            VStack(spacing: 0) {
+                // Top section: title + play
+                HStack(alignment: .top) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(routine.title)
+                            .font(.title3.weight(.bold))
+                            .foregroundStyle(.primary)
+                            .lineLimit(2)
+                            .multilineTextAlignment(.leading)
+
+                        Text("\(routine.steps.count) steps · \(formatDuration(routine.totalDuration))")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    Spacer(minLength: 12)
+
+                    Button {
+                        selectedRoutineForPlayer = routine
+                    } label: {
+                        Image(systemName: "play.fill")
+                            .font(.body.weight(.semibold))
+                            .foregroundStyle(.white)
+                            .frame(width: 48, height: 48)
+                            .background(Color.accentColor, in: Circle())
+                    }
+                    .buttonStyle(.plain)
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 20)
+                .padding(.bottom, 16)
+
+                // Bottom section: streak + stats
+                HStack(spacing: 0) {
+                    // Streak
+                    HStack(spacing: 6) {
+                        Image(systemName: "flame.fill")
+                            .font(.subheadline)
+                            .foregroundStyle(streak > 0 ? .orange : .secondary.opacity(0.3))
+                        Text(streak > 0 ? "\(streak) day streak" : "No streak")
+                            .font(.subheadline.weight(.medium))
+                            .foregroundStyle(streak > 0 ? .primary : .secondary)
+                    }
+
+                    Spacer()
+
+                    // Total completions
+                    if total > 0 {
+                        Text("\(total) completed")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 12)
+                .background(Color(.secondarySystemGroupedBackground).opacity(0.5))
+            }
+            .background(Color(.secondarySystemGroupedBackground))
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         }
-        .frame(width: 40)
+        .buttonStyle(.plain)
     }
+
+    // MARK: - Empty State
 
     private var emptyState: some View {
         VStack(spacing: 20) {
