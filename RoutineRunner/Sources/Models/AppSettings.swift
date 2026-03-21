@@ -9,6 +9,7 @@ final class AppSettings: ObservableObject {
     @AppStorage("branch") var branch: String = ""
     @AppStorage("autoSyncOnLaunch") var autoSyncOnLaunch: Bool = true
     @AppStorage("isDarkMode") var isDarkMode: Bool = false
+    @AppStorage("hapticsEnabled") var hapticsEnabled: Bool = true
 
     var isConfigured: Bool {
         !repoOwner.isEmpty && !repoName.isEmpty
