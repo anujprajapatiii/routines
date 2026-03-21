@@ -502,8 +502,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = UHJDRL8ZSN;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RoutineActivities/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = RoutineActivities;
-				INFOPLIST_KEY_NSExtension_NSExtensionPointIdentifier = "com.apple.widgetkit-extension";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -527,8 +527,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = UHJDRL8ZSN;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RoutineActivities/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = RoutineActivities;
-				INFOPLIST_KEY_NSExtension_NSExtensionPointIdentifier = "com.apple.widgetkit-extension";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
