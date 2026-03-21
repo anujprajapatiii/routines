@@ -50,7 +50,7 @@ struct RoutineListView: View {
         List(store.routines) { routine in
             NavigationLink(destination: RoutineDetailView(routine: routine)) {
                 HStack(spacing: 16) {
-                    VStack(alignment: .leading, spacing: 6) {
+                    VStack(alignment: .leading, spacing: 16) {
                         Text(routine.title)
                             .font(.body.weight(.semibold))
                             .foregroundStyle(.primary)
@@ -59,7 +59,6 @@ struct RoutineListView: View {
                             Label(formatDuration(routine.totalDuration), systemImage: "clock")
                         }
                         .font(.subheadline)
-                        .foregroundStyle(.secondary)
                     }
                     Spacer()
                     Button {
