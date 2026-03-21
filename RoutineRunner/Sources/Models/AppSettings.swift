@@ -6,6 +6,7 @@ final class AppSettings: ObservableObject {
     @AppStorage("repoName") var repoName: String = ""
     @AppStorage("accessToken") var accessToken: String = ""
     @AppStorage("subfolderPath") var subfolderPath: String = ""
+    @AppStorage("branch") var branch: String = ""
     @AppStorage("autoSyncOnLaunch") var autoSyncOnLaunch: Bool = true
 
     var isConfigured: Bool {

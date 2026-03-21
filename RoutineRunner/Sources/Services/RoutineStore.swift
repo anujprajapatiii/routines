@@ -55,6 +55,7 @@ final class RoutineStore: ObservableObject {
                 owner: settings.repoOwner,
                 repo: settings.repoName,
                 path: settings.subfolderPath,
+                branch: settings.branch,
                 token: settings.accessToken.isEmpty ? nil : settings.accessToken
             )
 

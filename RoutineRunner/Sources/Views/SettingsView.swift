@@ -17,6 +17,9 @@ struct SettingsView: View {
                     TextField("Subfolder (optional)", text: $store.settings.subfolderPath)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
+                    TextField("Branch (optional)", text: $store.settings.branch)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
                 }
 
                 Section("Authentication") {

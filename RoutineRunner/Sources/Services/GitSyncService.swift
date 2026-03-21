@@ -12,12 +12,16 @@ struct GitSyncService {
         owner: String,
         repo: String,
         path: String,
+        branch: String,
         token: String?
     ) async throws -> [(name: String, content: String)] {
         // List directory contents
         var urlString = "https://api.github.com/repos/\(owner)/\(repo)/contents"
         if !path.isEmpty {
             urlString += "/\(path)"
+        }
+        if !branch.isEmpty {
+            urlString += "?ref=\(branch)"
         }
 
         guard let url = URL(string: urlString) else {
