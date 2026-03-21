@@ -16,6 +16,11 @@ struct RoutineTimerState: Codable {
     /// Used only when paused (stepEndDate is meaningless while paused).
     let remainingSeconds: Int
 
+    /// All step names, so the widget intent can look up the next step.
+    let stepNames: [String]
+    /// All step durations, so the widget intent can set the next step's timer.
+    let stepDurations: [TimeInterval]
+
     // MARK: - Persistence
 
     private static let suiteName = "group.com.personal.RoutineRunner"

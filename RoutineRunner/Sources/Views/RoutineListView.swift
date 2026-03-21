@@ -2,8 +2,10 @@ import SwiftUI
 
 struct RoutineListView: View {
     @EnvironmentObject private var store: RoutineStore
+    @EnvironmentObject private var historyStore: RoutineHistoryStore
     @AppStorage("isDarkMode") private var isDarkMode = false
     @State private var showSettings = false
+    @State private var showHistory = false
     @State private var selectedRoutineForPlayer: Routine?
     @State private var routineCompleted = false
 
@@ -18,6 +20,11 @@ struct RoutineListView: View {
             }
             .navigationTitle("Routines")
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button { showHistory = true } label: {
+                        Image(systemName: "calendar")
+                    }
+                }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     HStack(spacing: 16) {
                         Button {
@@ -35,6 +42,10 @@ struct RoutineListView: View {
                 SettingsView()
                     .environmentObject(store)
             }
+            .sheet(isPresented: $showHistory) {
+                RoutineHistoryView()
+                    .environmentObject(historyStore)
+            }
             .refreshable {
                 await store.sync()
             }
@@ -47,36 +58,83 @@ struct RoutineListView: View {
     }
 
     private var routinesList: some View {
-        List(store.routines) { routine in
-            NavigationLink(destination: RoutineDetailView(routine: routine)) {
-                HStack(spacing: 16) {
-                    VStack(alignment: .leading, spacing: 16) {
-                        Text(routine.title)
-                            .font(.body.weight(.semibold))
-                            .foregroundStyle(.primary)
-                        HStack(spacing: 16) {
-                            Label("\(routine.steps.count) steps", systemImage: "list.number")
-                            Label(formatDuration(routine.totalDuration), systemImage: "clock")
-                        }
-                        .font(.subheadline)
-                    }
-                    Spacer()
-                    Button {
-                        selectedRoutineForPlayer = routine
-                    } label: {
-                        Image(systemName: "play.circle.fill")
-                            .font(.system(size: 40))
-                            .foregroundStyle(.tint)
-                    }
-                    .buttonStyle(.plain)
+        List {
+            if historyStore.totalCompletions > 0 {
+                Section {
+                    streakBanner
                 }
-                .padding(.vertical, 8)
+            }
+            ForEach(store.routines) { routine in
+                NavigationLink(destination: RoutineDetailView(routine: routine)) {
+                    HStack(spacing: 16) {
+                        VStack(alignment: .leading, spacing: 16) {
+                            Text(routine.title)
+                                .font(.body.weight(.semibold))
+                                .foregroundStyle(.primary)
+                            HStack(spacing: 16) {
+                                Label("\(routine.steps.count) steps", systemImage: "list.number")
+                                Label(formatDuration(routine.totalDuration), systemImage: "clock")
+                            }
+                            .font(.subheadline)
+                        }
+                        Spacer()
+                        Button {
+                            selectedRoutineForPlayer = routine
+                        } label: {
+                            Image(systemName: "play.circle.fill")
+                                .font(.system(size: 40))
+                                .foregroundStyle(.tint)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
             }
         }
         .listStyle(.insetGrouped)
         .fullScreenCover(item: $selectedRoutineForPlayer) { routine in
-            RoutinePlayerView(routine: routine, routineCompleted: $routineCompleted, hapticsEnabled: store.settings.hapticsEnabled)
+            RoutinePlayerView(routine: routine, routineCompleted: $routineCompleted, hapticsEnabled: store.settings.hapticsEnabled) { record in
+                historyStore.record(record)
+            }
         }
+    }
+
+    private var streakBanner: some View {
+        HStack(spacing: 16) {
+            VStack(spacing: 2) {
+                Text("\(historyStore.currentStreak())")
+                    .font(.title.weight(.bold))
+                Text("streak")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+            .frame(width: 56)
+
+            Divider()
+                .frame(height: 32)
+
+            VStack(spacing: 2) {
+                Text("\(historyStore.totalCompletions)")
+                    .font(.title.weight(.bold))
+                Text("total")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+            .frame(width: 56)
+
+            Divider()
+                .frame(height: 32)
+
+            VStack(spacing: 2) {
+                Text("\(historyStore.longestStreak())")
+                    .font(.title.weight(.bold))
+                Text("best")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+            .frame(width: 56)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 4)
     }
 
     private var emptyState: some View {
@@ -125,12 +183,14 @@ private let sampleRoutine = Routine(
 #Preview {
     RoutineListView()
         .environmentObject(RoutineStore.preview)
+        .environmentObject(RoutineHistoryStore.preview)
 }
 
 #Preview("Detail") {
     NavigationStack {
         RoutineDetailView(routine: sampleRoutine)
             .environmentObject(RoutineStore.preview)
+            .environmentObject(RoutineHistoryStore.preview)
     }
 }
 

@@ -149,7 +149,9 @@ final class RoutinePlayerViewModel: ObservableObject {
             stepIndex: currentStepIndex,
             stepEndDate: stepEndDate,
             isPaused: !isRunning,
-            remainingSeconds: Int(remainingSeconds)
+            remainingSeconds: Int(remainingSeconds),
+            stepNames: routine.steps.map(\.title),
+            stepDurations: routine.steps.map(\.duration)
         )
     }
 
@@ -172,27 +174,52 @@ final class RoutinePlayerViewModel: ObservableObject {
 
     /// When the app comes back from background, re-derive everything
     /// from the canonical stepEndDate stored in shared state.
+    /// Also picks up pause/play/skip actions performed via Live Activity intents.
     private func restoreFromSharedState() {
-        guard isRunning, let saved = RoutineTimerState.load() else { return }
+        guard let saved = RoutineTimerState.load() else { return }
 
-        // Walk forward through steps if time has elapsed past current step
+        // Pick up intent-driven pause/play changes
+        let wasPausedByIntent = saved.isPaused && isRunning
+        let wasResumedByIntent = !saved.isPaused && !isRunning
+
         currentStepIndex = saved.stepIndex
         stepEndDate = saved.stepEndDate
-        remainingSeconds = max(0, stepEndDate.timeIntervalSinceNow)
 
-        // If the step ended while we were in the background, advance
-        while remainingSeconds <= 0 && currentStepIndex < routine.steps.count - 1 {
-            currentStepIndex += 1
-            let stepDuration = routine.steps[currentStepIndex].duration
-            stepEndDate = stepEndDate.addingTimeInterval(stepDuration)
-            remainingSeconds = max(0, stepEndDate.timeIntervalSinceNow)
-        }
-
-        if remainingSeconds <= 0 {
-            complete()
-        } else {
+        if saved.isPaused {
+            // Intent paused the timer — adopt the frozen remaining seconds
+            remainingSeconds = TimeInterval(saved.remainingSeconds)
+            if wasPausedByIntent {
+                isRunning = false
+                if let resume = lastResumeDate {
+                    pausedElapsed += Date().timeIntervalSince(resume)
+                }
+                lastResumeDate = nil
+                timerCancellable?.cancel()
+                timerCancellable = nil
+            }
             syncSharedState()
             updateLiveActivity()
+        } else {
+            remainingSeconds = max(0, stepEndDate.timeIntervalSinceNow)
+
+            // Walk forward through steps if time has elapsed past current step
+            while remainingSeconds <= 0 && currentStepIndex < routine.steps.count - 1 {
+                currentStepIndex += 1
+                let stepDuration = routine.steps[currentStepIndex].duration
+                stepEndDate = stepEndDate.addingTimeInterval(stepDuration)
+                remainingSeconds = max(0, stepEndDate.timeIntervalSinceNow)
+            }
+
+            if remainingSeconds <= 0 {
+                complete()
+            } else {
+                if wasResumedByIntent {
+                    play()
+                } else {
+                    syncSharedState()
+                    updateLiveActivity()
+                }
+            }
         }
     }
 }
@@ -203,10 +230,12 @@ struct RoutinePlayerView: View {
     @StateObject private var viewModel: RoutinePlayerViewModel
     @Environment(\.dismiss) private var dismiss
     @Binding var routineCompleted: Bool
+    var onComplete: ((CompletionRecord) -> Void)?
 
-    init(routine: Routine, routineCompleted: Binding<Bool>, hapticsEnabled: Bool = true) {
+    init(routine: Routine, routineCompleted: Binding<Bool>, hapticsEnabled: Bool = true, onComplete: ((CompletionRecord) -> Void)? = nil) {
         _viewModel = StateObject(wrappedValue: RoutinePlayerViewModel(routine: routine, hapticsEnabled: hapticsEnabled))
         _routineCompleted = routineCompleted
+        self.onComplete = onComplete
     }
 
     var body: some View {
@@ -385,6 +414,13 @@ struct RoutinePlayerView: View {
                 .font(.headline)
                 .padding(.top, 4)
             Button("Done") {
+                let record = CompletionRecord(
+                    routineFileName: viewModel.routine.fileName,
+                    routineTitle: viewModel.routine.title,
+                    elapsedSeconds: viewModel.totalElapsedTime,
+                    expectedSeconds: viewModel.routine.totalDuration
+                )
+                onComplete?(record)
                 routineCompleted = true
                 dismiss()
             }

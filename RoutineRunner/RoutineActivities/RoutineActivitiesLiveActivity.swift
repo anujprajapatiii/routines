@@ -1,4 +1,5 @@
 import ActivityKit
+import AppIntents
 import SwiftUI
 import WidgetKit
 
@@ -6,12 +7,16 @@ struct RoutineActivitiesLiveActivity: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: RoutineActivityAttributes.self) { context in
             // MARK: - Lock Screen / Banner
-            // This is also rendered as the home-screen bar on iOS 26+
             HStack(spacing: 10) {
-                // Green live indicator
-                Circle()
-                    .fill(.green)
-                    .frame(width: 8, height: 8)
+                // Play/Pause button
+                Button(intent: TogglePlayPauseIntent()) {
+                    Image(systemName: context.state.isPaused ? "play.fill" : "pause.fill")
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(.white)
+                        .frame(width: 28, height: 28)
+                        .background(.white.opacity(0.2), in: Circle())
+                }
+                .buttonStyle(.plain)
 
                 // Step name + step counter
                 VStack(alignment: .leading, spacing: 1) {
@@ -38,6 +43,16 @@ struct RoutineActivitiesLiveActivity: Widget {
                         .foregroundStyle(.white)
                         .multilineTextAlignment(.trailing)
                 }
+
+                // Skip button
+                Button(intent: SkipStepIntent()) {
+                    Image(systemName: "forward.fill")
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(.white)
+                        .frame(width: 28, height: 28)
+                        .background(.white.opacity(0.2), in: Circle())
+                }
+                .buttonStyle(.plain)
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 12)
@@ -88,12 +103,31 @@ struct RoutineActivitiesLiveActivity: Widget {
                         .lineLimit(1)
                 }
                 DynamicIslandExpandedRegion(.bottom) {
-                    ProgressView(
-                        value: Double(context.state.stepIndex),
-                        total: Double(max(context.attributes.totalSteps, 1))
-                    )
-                    .tint(.cyan)
-                    .padding(.horizontal, 4)
+                    // Controls + progress bar
+                    VStack(spacing: 8) {
+                        HStack(spacing: 24) {
+                            Button(intent: TogglePlayPauseIntent()) {
+                                Image(systemName: context.state.isPaused ? "play.circle.fill" : "pause.circle.fill")
+                                    .font(.title2)
+                            }
+                            .buttonStyle(.plain)
+                            .tint(.white)
+
+                            Button(intent: SkipStepIntent()) {
+                                Image(systemName: "forward.circle.fill")
+                                    .font(.title2)
+                            }
+                            .buttonStyle(.plain)
+                            .tint(.white)
+                        }
+
+                        ProgressView(
+                            value: Double(context.state.stepIndex),
+                            total: Double(max(context.attributes.totalSteps, 1))
+                        )
+                        .tint(.cyan)
+                        .padding(.horizontal, 4)
+                    }
                     .padding(.top, 4)
                 }
             } compactLeading: {

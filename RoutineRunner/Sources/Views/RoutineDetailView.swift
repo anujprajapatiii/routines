@@ -3,6 +3,7 @@ import SwiftUI
 struct RoutineDetailView: View {
     let routine: Routine
     @EnvironmentObject private var store: RoutineStore
+    @EnvironmentObject private var historyStore: RoutineHistoryStore
     @Environment(\.dismiss) private var dismiss
     @State private var showPlayer = false
     @State private var routineCompleted = false
@@ -81,7 +82,9 @@ struct RoutineDetailView: View {
                 dismiss()
             }
         }) {
-            RoutinePlayerView(routine: routine, routineCompleted: $routineCompleted, hapticsEnabled: store.settings.hapticsEnabled)
+            RoutinePlayerView(routine: routine, routineCompleted: $routineCompleted, hapticsEnabled: store.settings.hapticsEnabled) { record in
+                historyStore.record(record)
+            }
         }
     }
 
