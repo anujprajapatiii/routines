@@ -53,6 +53,10 @@ struct SettingsView: View {
                     }
                 }
 
+                Section("Preferences") {
+                    Toggle("Haptic feedback", isOn: $store.settings.hapticsEnabled)
+                }
+
                 Section {
                     Text("\(store.routines.count) routine(s) loaded")
                         .foregroundStyle(.secondary)

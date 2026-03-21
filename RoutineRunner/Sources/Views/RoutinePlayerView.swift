@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 import Combine
 
 // MARK: - ViewModel
@@ -6,6 +7,7 @@ import Combine
 @MainActor
 final class RoutinePlayerViewModel: ObservableObject {
     let routine: Routine
+    let hapticsEnabled: Bool
 
     @Published var currentStepIndex: Int = 0
     @Published var remainingSeconds: TimeInterval = 0
@@ -13,8 +15,7 @@ final class RoutinePlayerViewModel: ObservableObject {
     @Published var isComplete: Bool = false
 
     /// Wall-clock elapsed time tracked via Date
-    @Published private var startDate: Date?
-    @Published private var pausedElapsed: TimeInterval = 0
+    private var pausedElapsed: TimeInterval = 0
     private var lastResumeDate: Date?
 
     var totalElapsedTime: TimeInterval {
@@ -39,24 +40,23 @@ final class RoutinePlayerViewModel: ObservableObject {
     }
 
     private var timerCancellable: AnyCancellable?
+    private var backgroundDate: Date?
+    private var lifecycleCancellables = Set<AnyCancellable>()
 
-    init(routine: Routine) {
+    init(routine: Routine, hapticsEnabled: Bool = true) {
         self.routine = routine
+        self.hapticsEnabled = hapticsEnabled
         self.remainingSeconds = routine.steps.first?.duration ?? 0
+        observeAppLifecycle()
     }
 
     func start() {
-        startDate = Date()
         lastResumeDate = Date()
         play()
     }
 
     func togglePlayPause() {
-        if isRunning {
-            pause()
-        } else {
-            play()
-        }
+        if isRunning { pause() } else { play() }
     }
 
     func play() {
@@ -65,9 +65,7 @@ final class RoutinePlayerViewModel: ObservableObject {
         lastResumeDate = Date()
         timerCancellable = Timer.publish(every: 1, on: .main, in: .common)
             .autoconnect()
-            .sink { [weak self] _ in
-                self?.tick()
-            }
+            .sink { [weak self] _ in self?.tick() }
     }
 
     func pause() {
@@ -87,6 +85,13 @@ final class RoutinePlayerViewModel: ObservableObject {
         }
         currentStepIndex += 1
         remainingSeconds = currentStep.duration
+        if hapticsEnabled {
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+        }
+    }
+
+    func addTime(_ seconds: TimeInterval = 120) {
+        remainingSeconds += seconds
     }
 
     private func tick() {
@@ -107,6 +112,45 @@ final class RoutinePlayerViewModel: ObservableObject {
     private func complete() {
         pause()
         isComplete = true
+        if hapticsEnabled {
+            UINotificationFeedbackGenerator().notificationOccurred(.success)
+        }
+    }
+
+    private func observeAppLifecycle() {
+        NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)
+            .sink { [weak self] _ in
+                guard let self, self.isRunning else { return }
+                self.backgroundDate = Date()
+            }
+            .store(in: &lifecycleCancellables)
+
+        NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)
+            .sink { [weak self] _ in
+                guard let self, let bg = self.backgroundDate, self.isRunning else { return }
+                self.backgroundDate = nil
+                self.consumeElapsedTime(Date().timeIntervalSince(bg))
+            }
+            .store(in: &lifecycleCancellables)
+    }
+
+    private func consumeElapsedTime(_ elapsed: TimeInterval) {
+        var remaining = elapsed
+        while remaining > 0 {
+            if remaining >= remainingSeconds {
+                remaining -= remainingSeconds
+                remainingSeconds = 0
+                if currentStepIndex >= routine.steps.count - 1 {
+                    complete()
+                    return
+                }
+                currentStepIndex += 1
+                remainingSeconds = currentStep.duration
+            } else {
+                remainingSeconds -= remaining
+                remaining = 0
+            }
+        }
     }
 }
 
@@ -115,9 +159,11 @@ final class RoutinePlayerViewModel: ObservableObject {
 struct RoutinePlayerView: View {
     @StateObject private var viewModel: RoutinePlayerViewModel
     @Environment(\.dismiss) private var dismiss
+    @Binding var routineCompleted: Bool
 
-    init(routine: Routine) {
-        _viewModel = StateObject(wrappedValue: RoutinePlayerViewModel(routine: routine))
+    init(routine: Routine, routineCompleted: Binding<Bool>, hapticsEnabled: Bool = true) {
+        _viewModel = StateObject(wrappedValue: RoutinePlayerViewModel(routine: routine, hapticsEnabled: hapticsEnabled))
+        _routineCompleted = routineCompleted
     }
 
     var body: some View {
@@ -251,15 +297,22 @@ struct RoutinePlayerView: View {
     }
 
     private var controlsBar: some View {
-        HStack(spacing: 40) {
+        HStack(spacing: 32) {
+            Button { viewModel.addTime() } label: {
+                Text("+2m")
+                    .font(.subheadline.weight(.medium))
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                    .background(.secondary.opacity(0.12), in: Capsule())
+            }
+            .foregroundStyle(.primary)
+
             Button { viewModel.togglePlayPause() } label: {
                 Image(systemName: viewModel.isRunning ? "pause.circle.fill" : "play.circle.fill")
                     .font(.system(size: 64))
             }
 
-            Button {
-                viewModel.skipForward()
-            } label: {
+            Button { viewModel.skipForward() } label: {
                 Text("Done")
                     .font(.headline)
                     .padding(.horizontal, 24)
@@ -285,7 +338,10 @@ struct RoutinePlayerView: View {
             Text("Total time: \(formatDuration(viewModel.totalElapsedTime))")
                 .font(.headline)
                 .padding(.top, 4)
-            Button("Done") { dismiss() }
+            Button("Done") {
+                    routineCompleted = true
+                    dismiss()
+                }
                 .buttonStyle(.borderedProminent)
                 .padding(.top)
         }
