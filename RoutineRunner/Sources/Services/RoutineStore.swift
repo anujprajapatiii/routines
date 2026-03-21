@@ -41,7 +41,7 @@ final class RoutineStore: ObservableObject {
             .sorted { $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending }
     }
 
-    func sync() async {
+    func sync(historyStore: RoutineHistoryStore? = nil) async {
         guard settings.isConfigured else {
             lastSyncError = "Configure your GitHub repo in Settings first."
             return
@@ -73,6 +73,12 @@ final class RoutineStore: ObservableObject {
             }
 
             loadRoutines()
+
+            // Prune history for routines that were deleted from the repo
+            if let historyStore {
+                let activeFileNames = Set(routines.map(\.fileName))
+                historyStore.pruneOrphanedRecords(keeping: activeFileNames)
+            }
         } catch {
             lastSyncError = error.localizedDescription
         }

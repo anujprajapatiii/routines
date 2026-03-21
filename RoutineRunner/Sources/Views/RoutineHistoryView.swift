@@ -4,6 +4,7 @@ struct RoutineHistoryView: View {
     @EnvironmentObject private var historyStore: RoutineHistoryStore
     @Environment(\.dismiss) private var dismiss
     @State private var displayedMonth = Date()
+    @State private var showClearConfirmation = false
 
     private let calendar = Calendar.current
 
@@ -35,6 +36,14 @@ struct RoutineHistoryView: View {
                         .foregroundStyle(.primary)
                         .textCase(nil)
                 }
+
+                if !historyStore.records.isEmpty {
+                    Section {
+                        Button("Clear All History", role: .destructive) {
+                            showClearConfirmation = true
+                        }
+                    }
+                }
             }
             .listStyle(.insetGrouped)
             .navigationTitle("History")
@@ -43,6 +52,13 @@ struct RoutineHistoryView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") { dismiss() }
                 }
+            }
+            .confirmationDialog("Clear all completion history?", isPresented: $showClearConfirmation, titleVisibility: .visible) {
+                Button("Clear All", role: .destructive) {
+                    historyStore.clearAll()
+                }
+            } message: {
+                Text("This will permanently delete all completion records and reset your streaks.")
             }
         }
     }

@@ -47,11 +47,11 @@ struct RoutineListView: View {
                     .environmentObject(historyStore)
             }
             .refreshable {
-                await store.sync()
+                await store.sync(historyStore: historyStore)
             }
             .task {
                 if store.settings.isConfigured && store.settings.autoSyncOnLaunch {
-                    await store.sync()
+                    await store.sync(historyStore: historyStore)
                 }
             }
         }

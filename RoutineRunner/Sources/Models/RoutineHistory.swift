@@ -45,6 +45,21 @@ final class RoutineHistoryStore: ObservableObject {
         save()
     }
 
+    /// Remove records for routines that no longer exist locally.
+    func pruneOrphanedRecords(keeping activeFileNames: Set<String>) {
+        let before = records.count
+        records.removeAll { !activeFileNames.contains($0.routineFileName) }
+        if records.count != before {
+            save()
+        }
+    }
+
+    /// Remove all history.
+    func clearAll() {
+        records.removeAll()
+        save()
+    }
+
     // MARK: - Queries
 
     /// All completions for a specific routine, newest first.
