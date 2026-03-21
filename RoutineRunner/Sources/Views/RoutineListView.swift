@@ -49,15 +49,16 @@ struct RoutineListView: View {
     private var routinesList: some View {
         List(store.routines) { routine in
             NavigationLink(destination: RoutineDetailView(routine: routine)) {
-                HStack {
-                    VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 16) {
+                    VStack(alignment: .leading, spacing: 6) {
                         Text(routine.title)
-                            .font(.headline)
-                        HStack(spacing: 12) {
+                            .font(.body.weight(.semibold))
+                            .foregroundStyle(.primary)
+                        HStack(spacing: 16) {
                             Label("\(routine.steps.count) steps", systemImage: "list.number")
                             Label(formatDuration(routine.totalDuration), systemImage: "clock")
                         }
-                        .font(.caption)
+                        .font(.subheadline)
                         .foregroundStyle(.secondary)
                     }
                     Spacer()
@@ -65,35 +66,38 @@ struct RoutineListView: View {
                         selectedRoutineForPlayer = routine
                     } label: {
                         Image(systemName: "play.circle.fill")
-                            .font(.system(size: 36))
+                            .font(.system(size: 40))
                             .foregroundStyle(.tint)
                     }
                     .buttonStyle(.plain)
                 }
-                .padding(.vertical, 4)
+                .padding(.vertical, 8)
             }
         }
+        .listStyle(.insetGrouped)
         .fullScreenCover(item: $selectedRoutineForPlayer) { routine in
             RoutinePlayerView(routine: routine, routineCompleted: $routineCompleted, hapticsEnabled: store.settings.hapticsEnabled)
         }
     }
 
     private var emptyState: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 20) {
             Image(systemName: "doc.text")
-                .font(.system(size: 48))
-                .foregroundStyle(.secondary)
+                .font(.system(size: 56, weight: .light))
+                .foregroundStyle(.tertiary)
             Text("No Routines")
-                .font(.title2)
-                .fontWeight(.semibold)
+                .font(.title2.weight(.bold))
             Text("Configure a GitHub repo in Settings\nand sync to load your routines.")
-                .font(.subheadline)
+                .font(.body)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
+                .lineSpacing(2)
             Button("Open Settings") { showSettings = true }
                 .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+                .padding(.top, 4)
         }
-        .padding()
+        .padding(32)
     }
 }
 

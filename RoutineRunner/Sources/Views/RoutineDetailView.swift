@@ -10,48 +10,56 @@ struct RoutineDetailView: View {
     var body: some View {
         List {
             Section {
-                HStack {
+                HStack(spacing: 24) {
                     Label("\(routine.steps.count) steps", systemImage: "list.number")
                     Spacer()
                     Label(formatDuration(routine.totalDuration), systemImage: "clock")
                 }
-                .font(.subheadline)
+                .font(.subheadline.weight(.medium))
                 .foregroundStyle(.secondary)
+                .padding(.vertical, 4)
             }
 
-            Section("Steps") {
+            Section {
                 ForEach(Array(routine.steps.enumerated()), id: \.element.id) { index, step in
-                    VStack(alignment: .leading, spacing: 6) {
+                    VStack(alignment: .leading, spacing: 8) {
                         HStack {
                             Text("\(index + 1).")
-                                .foregroundStyle(.secondary)
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundStyle(.tertiary)
                                 .monospacedDigit()
                             Text(step.title)
-                                .fontWeight(.medium)
+                                .font(.body.weight(.medium))
                             Spacer()
                             Text(formatDuration(step.duration))
-                                .font(.caption)
+                                .font(.subheadline)
                                 .foregroundStyle(.secondary)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 2)
-                                .background(.secondary.opacity(0.12), in: Capsule())
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 4)
+                                .background(.secondary.opacity(0.1), in: Capsule())
                         }
 
                         if !step.notes.isEmpty {
-                            VStack(alignment: .leading, spacing: 2) {
+                            VStack(alignment: .leading, spacing: 4) {
                                 ForEach(step.notes.indices, id: \.self) { i in
                                     noteView(step.notes[i])
                                 }
                             }
-                            .font(.caption)
+                            .font(.subheadline)
                             .foregroundStyle(.secondary)
-                            .padding(.leading, 24)
+                            .padding(.leading, 28)
                         }
                     }
-                    .padding(.vertical, 2)
+                    .padding(.vertical, 6)
                 }
+            } header: {
+                Text("Steps")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.primary)
+                    .textCase(nil)
             }
         }
+        .listStyle(.insetGrouped)
         .navigationTitle(routine.title)
         .safeAreaInset(edge: .bottom) {
             Button {
@@ -60,10 +68,12 @@ struct RoutineDetailView: View {
                 Text("Start Routine")
                     .font(.headline)
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
+                    .padding(.vertical, 14)
             }
             .buttonStyle(.borderedProminent)
-            .padding()
+            .controlSize(.large)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 12)
             .background(.ultraThinMaterial)
         }
         .fullScreenCover(isPresented: $showPlayer, onDismiss: {
@@ -79,14 +89,18 @@ struct RoutineDetailView: View {
     private func noteView(_ note: Note) -> some View {
         if let link = note.link {
             Link(destination: link) {
-                HStack(spacing: 4) {
+                HStack(spacing: 6) {
                     Image(systemName: "link")
-                        .font(.caption2)
+                        .font(.caption)
                     Text(note.text)
                 }
             }
         } else {
-            Text("- \(note.text)")
+            HStack(alignment: .top, spacing: 6) {
+                Text("•")
+                    .foregroundStyle(.tertiary)
+                Text(note.text)
+            }
         }
     }
 }

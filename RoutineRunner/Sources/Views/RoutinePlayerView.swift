@@ -241,152 +241,153 @@ struct RoutinePlayerView: View {
     // MARK: - Player
 
     private var playerView: some View {
-        VStack(spacing: 24) {
-            // Overall progress
+        VStack(spacing: 28) {
             overallProgressBar
 
             Spacer()
 
-            // Step info
             stepHeader
 
-            // Circular timer
             circularTimer
-                .padding(.vertical, 8)
+                .padding(.vertical, 12)
 
-            // Notes
             notesSection
 
             Spacer()
 
-            // Controls
             controlsBar
         }
-        .padding()
+        .padding(.horizontal, 20)
+        .padding(.vertical, 16)
     }
 
     private var overallProgressBar: some View {
-        VStack(spacing: 4) {
+        VStack(spacing: 8) {
             ProgressView(value: viewModel.overallProgress)
                 .tint(.accentColor)
+                .scaleEffect(y: 1.5)
             HStack {
                 Text("Step \(viewModel.currentStepIndex + 1) of \(viewModel.routine.steps.count)")
                 Spacer()
                 Text(formatDuration(viewModel.routine.totalDuration * (1 - viewModel.overallProgress)) + " left")
             }
-            .font(.caption)
+            .font(.subheadline)
             .foregroundStyle(.secondary)
         }
     }
 
     private var stepHeader: some View {
         Text(viewModel.currentStep.title)
-            .font(.title2)
-            .fontWeight(.bold)
+            .font(.title.weight(.bold))
             .multilineTextAlignment(.center)
     }
 
     private var circularTimer: some View {
         ZStack {
-            // Background circle
             Circle()
-                .stroke(Color.secondary.opacity(0.2), lineWidth: 12)
+                .stroke(Color.secondary.opacity(0.15), lineWidth: 14)
 
-            // Progress circle
             Circle()
                 .trim(from: 0, to: viewModel.stepProgress)
-                .stroke(Color.accentColor, style: StrokeStyle(lineWidth: 12, lineCap: .round))
+                .stroke(Color.accentColor, style: StrokeStyle(lineWidth: 14, lineCap: .round))
                 .rotationEffect(.degrees(-90))
                 .animation(.linear(duration: 1), value: viewModel.stepProgress)
 
-            // Time display
-            VStack(spacing: 4) {
+            VStack(spacing: 6) {
                 Text(timeString(viewModel.remainingSeconds))
-                    .font(.system(size: 48, weight: .light, design: .monospaced))
+                    .font(.system(size: 52, weight: .light, design: .monospaced))
+                    .foregroundStyle(.primary)
                 Text("remaining")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .font(.subheadline)
+                    .foregroundStyle(.tertiary)
             }
         }
-        .frame(width: 220, height: 220)
+        .frame(width: 240, height: 240)
     }
 
     private var notesSection: some View {
         Group {
             if !viewModel.currentStep.notes.isEmpty {
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: 8) {
                     ForEach(viewModel.currentStep.notes.indices, id: \.self) { i in
                         let note = viewModel.currentStep.notes[i]
                         if let link = note.link {
                             Link(destination: link) {
-                                HStack(spacing: 4) {
+                                HStack(spacing: 6) {
                                     Image(systemName: "link")
-                                        .font(.caption)
-                                    Text(note.text)
                                         .font(.subheadline)
+                                    Text(note.text)
+                                        .font(.body)
                                 }
                             }
                         } else {
-                            Text("- \(note.text)")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
+                            HStack(alignment: .top, spacing: 6) {
+                                Text("•")
+                                    .foregroundStyle(.tertiary)
+                                Text(note.text)
+                            }
+                            .font(.body)
+                            .foregroundStyle(.secondary)
                         }
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal)
+                .padding(.horizontal, 24)
             }
         }
     }
 
     private var controlsBar: some View {
-        HStack(spacing: 32) {
+        HStack(spacing: 36) {
             Button { viewModel.addTime() } label: {
                 Text("+2m")
-                    .font(.subheadline.weight(.medium))
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .background(.secondary.opacity(0.12), in: Capsule())
+                    .font(.body.weight(.semibold))
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 10)
+                    .background(.secondary.opacity(0.1), in: Capsule())
             }
             .foregroundStyle(.primary)
 
             Button { viewModel.togglePlayPause() } label: {
                 Image(systemName: viewModel.isRunning ? "pause.circle.fill" : "play.circle.fill")
-                    .font(.system(size: 64))
+                    .font(.system(size: 72))
             }
 
             Button { viewModel.skipForward() } label: {
-                Text("Done")
-                    .font(.headline)
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 12)
+                Text("Skip")
+                    .font(.body.weight(.semibold))
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 10)
             }
             .buttonStyle(.borderedProminent)
+            .controlSize(.large)
         }
     }
 
     // MARK: - Completion
 
     private var completionView: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 24) {
             Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 72))
+                .font(.system(size: 80, weight: .light))
                 .foregroundStyle(.green)
-            Text("Routine Complete!")
-                .font(.title)
-                .fontWeight(.bold)
-            Text(viewModel.routine.title)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+            VStack(spacing: 8) {
+                Text("Routine Complete!")
+                    .font(.title.weight(.bold))
+                Text(viewModel.routine.title)
+                    .font(.body)
+                    .foregroundStyle(.secondary)
+            }
             Text("Total time: \(formatDuration(viewModel.totalElapsedTime))")
-                .font(.headline)
+                .font(.title3.weight(.semibold))
                 .padding(.top, 4)
             Button("Done") {
-                    routineCompleted = true
-                    dismiss()
-                }
-                .buttonStyle(.borderedProminent)
-                .padding(.top)
+                routineCompleted = true
+                dismiss()
+            }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
+            .padding(.top, 8)
         }
     }
 
