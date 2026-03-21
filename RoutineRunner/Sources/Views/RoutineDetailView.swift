@@ -90,20 +90,3 @@ struct RoutineDetailView: View {
         }
     }
 }
-
-// MARK: - Preview
-
-#Preview {
-    NavigationStack {
-        RoutineDetailView(routine: Routine(
-            title: "Morning Routine",
-            steps: [
-                Step(title: "Meditation", duration: 300, notes: [Note(text: "Focus on breathing")]),
-                Step(title: "Stretching", duration: 600),
-                Step(title: "Journaling", duration: 900, notes: [Note(text: "Write 3 gratitudes")]),
-            ],
-            fileName: "morning.md"
-        ))
-        .environmentObject(RoutineStore())
-    }
-}
