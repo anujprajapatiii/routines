@@ -109,33 +109,7 @@ func formatDuration(_ seconds: TimeInterval) -> String {
 
 // MARK: - Preview
 
-private let sampleRoutine = Routine(
-    title: "Morning Routine",
-    steps: [
-        Step(title: "Meditation", duration: 300, notes: [Note(text: "Focus on breathing")]),
-        Step(title: "Stretching", duration: 600),
-        Step(title: "Journaling", duration: 900, notes: [Note(text: "Write 3 gratitudes")]),
-    ],
-    fileName: "morning.md"
-)
-
 #Preview {
     RoutineListView()
-        .environmentObject(RoutineStore())
-}
-
-#Preview("Detail") {
-    NavigationStack {
-        RoutineDetailView(routine: sampleRoutine)
-            .environmentObject(RoutineStore())
-    }
-}
-
-#Preview("Player") {
-    RoutinePlayerView(routine: sampleRoutine, routineCompleted: .constant(false))
-}
-
-#Preview("Settings") {
-    SettingsView()
         .environmentObject(RoutineStore())
 }

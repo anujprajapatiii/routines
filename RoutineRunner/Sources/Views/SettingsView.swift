@@ -72,3 +72,10 @@ struct SettingsView: View {
         }
     }
 }
+
+// MARK: - Preview
+
+#Preview {
+    SettingsView()
+        .environmentObject(RoutineStore())
+}

@@ -399,3 +399,20 @@ struct RoutinePlayerView: View {
         return String(format: "%d:%02d", m, s)
     }
 }
+
+// MARK: - Preview
+
+#Preview {
+    RoutinePlayerView(
+        routine: Routine(
+            title: "Morning Routine",
+            steps: [
+                Step(title: "Meditation", duration: 300, notes: [Note(text: "Focus on breathing")]),
+                Step(title: "Stretching", duration: 600),
+                Step(title: "Journaling", duration: 900, notes: [Note(text: "Write 3 gratitudes")]),
+            ],
+            fileName: "morning.md"
+        ),
+        routineCompleted: .constant(false)
+    )
+}
