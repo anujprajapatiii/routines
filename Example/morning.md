@@ -5,7 +5,7 @@
 
 ## Bathroom (5m)
 
-## Brush teeth (3m)
+## Brush teeth (4m)
 
 ## Make bed (2m)
 
@@ -13,5 +13,7 @@
 
 ## Brew coffee (10m)
 
+## Take out trash (10m)
+
 ## Grounding Routine (40m)
-- (https://www.youtube.com/watch?v=0pbuvhbg7po)
+- [Adriene Grounding](https://www.youtube.com/watch?v=0pbuvhbg7po)
